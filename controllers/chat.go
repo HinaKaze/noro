@@ -1,11 +1,16 @@
 package controllers
 
 import (
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/gorilla/websocket"
 	"github.com/hinakaze/noro/models"
 )
+
+var wss []*websocket.Conn = make([]*websocket.Conn, 0)
 
 type ChatRoomsController struct {
 	beego.Controller
@@ -34,4 +39,34 @@ func (c *ChatMessagesController) Get() {
 	fakeMessages = append(fakeMessages, fakeMessage1, fakeMessage2)
 	c.Data["List"] = fakeMessages
 	c.TplName = "chat_messages.tpl"
+}
+
+type WebSocketController struct {
+	beego.Controller
+}
+
+func (w *WebSocketController) Join() {
+	defer func() {
+		if x := recover(); x != nil {
+			log.Println(x)
+		}
+	}()
+	ws, err := websocket.Upgrade(w.Ctx.ResponseWriter, w.Ctx.Request, nil, 1024, 1024)
+	if err != nil {
+		panic(err.Error())
+	}
+	defer ws.Close()
+	wss = append(wss, ws)
+	for {
+		_, bytes, err := ws.ReadMessage()
+		if err != nil {
+			panic(err.Error())
+		}
+		fakeUserName := fmt.Sprintf("noro%d", len(wss))
+		fakeUser := models.User{Id: len(wss), Name: fakeUserName}
+		fakeMessage := models.ChatMessage{Id: 1, Type: 2, User: fakeUser, Text: string(bytes), Time: time.Now()}
+		for _, c := range wss {
+			c.WriteJSON(fakeMessage)
+		}
+	}
 }
