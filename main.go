@@ -1,11 +1,11 @@
 package main
 
 import (
-	_ "github.com/hinakaze/noro/routers"
 	"github.com/astaxie/beego"
+	_ "github.com/hinakaze/noro/routers"
 )
 
 func main() {
+	//beego.SetStaticPath("static/img", "./static/img")
 	beego.Run()
 }
-

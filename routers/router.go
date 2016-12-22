@@ -7,5 +7,6 @@ import (
 
 func init() {
 	beego.Router("/", &controllers.MainController{})
-	beego.Router("/chat_rooms", &controllers.ChatRoomListController{})
+	beego.Router("/chat_rooms", &controllers.ChatRoomsController{})
+	beego.Router("/chat_messages", &controllers.ChatMessagesController{})
 }

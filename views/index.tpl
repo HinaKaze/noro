@@ -28,6 +28,11 @@
             $.get("/chat_rooms",function(data,status){
               $("#main_content").html(data);
             });
+            $("#click").click(function(){
+              $.get("/chat_messages",function(data,status){
+              $("#main_content").html(data);
+            });
+            });     
           });
     </script>
   </head>
@@ -39,6 +44,7 @@
           <div class="jumbotron" style="color:#fff;background-color:#333">
             <h2>noro chat room</h2>
             <h2>施工中</h2>
+            <button class="btn" id="click">进入房间</button>
           </div>
         </div>
         <div id="main_content" style="font-family:Hiragino Sans GB,Microsoft YaHei,宋体;line-height=150%"></div>
