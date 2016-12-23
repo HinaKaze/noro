@@ -38,7 +38,7 @@
   </head>
   <body style="padding-top:10px">
     <!-- <div class="row"> -->
-      <div class="col-md-3"></div>
+      <div class="col-md-3" id="left_content"></div>
       <div class="col-md-6 container" >
         <div style="text-align:center">
           <div class="jumbotron" style="color:#fff;background-color:#333">
@@ -49,6 +49,6 @@
         </div>
         <div id="main_content" style="font-family:Hiragino Sans GB,Microsoft YaHei,宋体;line-height=150%"></div>
       </div>
-      <div class="col-md-3"></div>
+      <div class="col-md-3" id="right_content"></div>
     </body>
   </html>

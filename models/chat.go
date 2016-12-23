@@ -15,6 +15,11 @@ type ChatRoom struct {
 	CreateYear  int
 }
 
+type ChatRoomDetail struct {
+	ChatRoom
+	Mates []User
+}
+
 type ChatMessage struct {
 	Id   int
 	Type uint8 //0 join,1 leave,2 message

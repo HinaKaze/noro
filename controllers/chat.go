@@ -11,6 +11,7 @@ import (
 )
 
 var wss []*websocket.Conn = make([]*websocket.Conn, 0)
+var roomMates []models.User = make([]models.User, 0)
 
 //var wssM sync.Mutex
 
@@ -26,6 +27,17 @@ func (c *ChatRoomsController) Get() {
 	c.Data["List"] = fakeChatRooms
 	c.Data["Title"] = "作戦本部"
 	c.TplName = "chat_rooms.tpl"
+}
+
+type ChatRoomController struct {
+	beego.Controller
+}
+
+func (c *ChatRoomController) Get() {
+	fakeChatRoom1 := models.ChatRoom{Id: 1, Name: "noro作战本部1", CreateTime: time.Now(), CreateDay: time.Now().Day(), CreateMonth: int(time.Now().Month()), CreateYear: time.Now().Year(), Creator: models.User{Id: 1, Name: "HinaKaze"}}
+	fakeChatRoomDetai := models.ChatRoomDetail{ChatRoom: fakeChatRoom1, Mates: roomMates}
+	c.Data["json"] = &fakeChatRoomDetai
+	c.ServeJSON()
 }
 
 type ChatMessagesController struct {
@@ -96,5 +108,18 @@ func broadCastMessage(m models.ChatMessage) {
 	beego.BeeLogger.Debug("WebSocket conn count [%d]", len(wss))
 	for _, c := range wss {
 		c.WriteJSON(m)
+	}
+}
+
+func addMates(name string) {
+	roomMates = append(roomMates, models.User{Id: -1, Name: name})
+}
+
+func removeMates(name string) {
+	for i, u := range roomMates {
+		if u.Name == name {
+			roomMates = append(roomMates[:i], roomMates[i+1:]...)
+			break
+		}
 	}
 }
