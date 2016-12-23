@@ -20,5 +20,5 @@ type ChatMessage struct {
 	Type uint8 //0 join,1 leave,2 message
 	User User
 	Text string
-	Time time.Time
+	Time string
 }

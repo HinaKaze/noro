@@ -37,10 +37,10 @@
     </script>
   </head>
   <body style="padding-top:10px">
-    <div class="row">
+    <!-- <div class="row"> -->
       <div class="col-md-3"></div>
       <div class="col-md-6 container" >
-        <div class="row" style="text-align:center">
+        <div style="text-align:center">
           <div class="jumbotron" style="color:#fff;background-color:#333">
             <h2>noro chat room</h2>
             <h2>施工中</h2>

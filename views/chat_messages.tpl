@@ -7,10 +7,13 @@ $(document).ready(function () {
 		switch(data.Type){
 			case 0: //join
 				addJoin(data.User.Name)
+				break;
 			case 1: //leave
 				addLeave(data.User.Name)
+				break;
 			case 2: //message
 				addMessage(data.User.Name,data.Text,data.Time)
+				break;
 		}
 	}
 
@@ -36,11 +39,11 @@ $(document).ready(function () {
 }
 
 function addJoin(name){
-	$("#messages").append("<div>"+name+"join room</div>")
+	$("#messages").append("<div class='chat_tip'>"+name+" 加入 房间</div>")
 }
 
 function addLeave(name){
-	$("#messages").append("<div>"+name+"leave room</div>")
+	$("#messages").append("<div class='chat_tip'>"+name+" 离开 房间</div>")
 }
 })
 

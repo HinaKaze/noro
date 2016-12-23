@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"fmt"
-	"log"
+	//"sync"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -11,6 +11,8 @@ import (
 )
 
 var wss []*websocket.Conn = make([]*websocket.Conn, 0)
+
+//var wssM sync.Mutex
 
 type ChatRoomsController struct {
 	beego.Controller
@@ -34,8 +36,8 @@ func (c *ChatMessagesController) Get() {
 	fakeMessages := make([]models.ChatMessage, 0)
 	fakeUser1 := models.User{Id: 1, Name: "HinaKaze"}
 	fakeUser2 := models.User{Id: 2, Name: "Smilok"}
-	fakeMessage1 := models.ChatMessage{Id: 1, User: fakeUser1, Text: "mission start", Time: time.Now()}
-	fakeMessage2 := models.ChatMessage{Id: 2, User: fakeUser2, Text: "mission end", Time: time.Now()}
+	fakeMessage1 := models.ChatMessage{Id: 1, User: fakeUser1, Text: "mission start", Time: time.Now().String()}
+	fakeMessage2 := models.ChatMessage{Id: 2, User: fakeUser2, Text: "mission end", Time: time.Now().String()}
 	fakeMessages = append(fakeMessages, fakeMessage1, fakeMessage2)
 	c.Data["List"] = fakeMessages
 	c.TplName = "chat_messages.tpl"
@@ -48,25 +50,51 @@ type WebSocketController struct {
 func (w *WebSocketController) Join() {
 	defer func() {
 		if x := recover(); x != nil {
-			log.Println(x)
+			beego.BeeLogger.Warning("WebSocket disconnected [%+v]", x)
 		}
 	}()
+	fakeUserName := fmt.Sprintf("noro%d", len(wss)+1)
+	fakeUser := models.User{Id: len(wss) + 1, Name: fakeUserName}
 	ws, err := websocket.Upgrade(w.Ctx.ResponseWriter, w.Ctx.Request, nil, 1024, 1024)
 	if err != nil {
-		panic(err.Error())
+		beego.BeeLogger.Error(err.Error())
+		return
 	}
-	defer ws.Close()
+	defer func() {
+		//		wssM.Lock()
+		//		defer wssM.Unlock()
+		for i, w := range wss {
+			if w == ws {
+				wss = append(wss[:i], wss[i+1:]...)
+				break
+			}
+		}
+		fakeLeaveMessage := models.ChatMessage{Id: 1, Type: 1, User: fakeUser, Text: "", Time: time.Now().String()}
+		broadCastMessage(fakeLeaveMessage)
+		err := ws.Close()
+		if err != nil {
+			beego.BeeLogger.Error(err.Error())
+			return
+		}
+	}()
 	wss = append(wss, ws)
+	fakeJoinMessage := models.ChatMessage{Id: 1, Type: 0, User: fakeUser, Text: "", Time: time.Now().String()}
+	broadCastMessage(fakeJoinMessage)
 	for {
 		_, bytes, err := ws.ReadMessage()
 		if err != nil {
 			panic(err.Error())
 		}
-		fakeUserName := fmt.Sprintf("noro%d", len(wss))
-		fakeUser := models.User{Id: len(wss), Name: fakeUserName}
-		fakeMessage := models.ChatMessage{Id: 1, Type: 2, User: fakeUser, Text: string(bytes), Time: time.Now()}
-		for _, c := range wss {
-			c.WriteJSON(fakeMessage)
-		}
+		fakeMessage := models.ChatMessage{Id: 1, Type: 2, User: fakeUser, Text: string(bytes), Time: time.Now().String()}
+		broadCastMessage(fakeMessage)
+	}
+}
+
+func broadCastMessage(m models.ChatMessage) {
+	//wssM.Lock()
+	//defer wssM.Unlock()
+	beego.BeeLogger.Debug("WebSocket conn count [%d]", len(wss))
+	for _, c := range wss {
+		c.WriteJSON(m)
 	}
 }
