@@ -2,9 +2,18 @@
 $(document).ready(function () {
 	var ws = new WebSocket('ws://'+window.location.host+'/ws?user_name='+$('#chat_username').text());
 	//fetch room detail
-	chatRoomDetail = {}
+	chatRoomDetail = {
+		"Id" : -1,
+		"Name" : "noro作战本部",
+		"Creator":{},
+		"MaxMember":0,
+		"Mates":[]
+	}
 	$.get("/chat_room",function(data,status){
-		chatRoomDetail = data
+		chatRoomDetail.Id = data.Id
+		chatRoomDetail.Name = data.Name
+		chatRoomDetail.Creator = data.Creator
+		chatRoomDetail.MaxMember = data.MaxMember
     	//chatRoomDetail = JSON.parse(data)
   		//console.log('111',chatRoomDetail)
     	showRoomMates()
@@ -47,8 +56,7 @@ $(document).ready(function () {
 
 	function addJoin(name){
 		$("#messages").append("<div class='chat_tip'>"+name+" 加入 房间</div>")
-		console.log(chatRoomDetail)
-		chatRoomDetail.Mates.push("name");
+		chatRoomDetail.Mates.push(name);
 		showRoomMates()
 	}
 
@@ -63,10 +71,9 @@ $(document).ready(function () {
 		showRoomMates()
 	}
 	function showRoomMates(){
-		alert("11121")
 		for (u of chatRoomDetail.Mates){
 			var http = '\
-				<div class="chat-room-mate">'+u.Name+'</div>\
+				<div class="chat-room-mate">'+u+'</div>\
 			';
 			$("#right_content").append(http);
 		}
