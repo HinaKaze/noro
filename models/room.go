@@ -25,7 +25,9 @@ func (c *ChatRoomManager) AddRoomDetail(room ChatRoom) {
 	if _, ok := c.RoomMap[room.Id]; ok {
 		return
 	}
-	c.RoomMap[room.Id] = &ChatRoomDetail{ChatRoom: room}
+	var newDetail = ChatRoomDetail{ChatRoom: room}
+	newDetail.Init()
+	c.RoomMap[room.Id] = &newDetail
 	return
 }
 
@@ -40,6 +42,11 @@ type ChatRoomDetail struct {
 	Mates       []*UserDetail
 	HistoryMsgs []ChatMessage
 	sync.RWMutex
+}
+
+func (c *ChatRoomDetail) Init() {
+	c.Mates = make([]*UserDetail, 0)
+	c.HistoryMsgs = make([]ChatMessage, 0)
 }
 
 func (c *ChatRoomDetail) AddMate(u User, ws *websocket.Conn) bool {
