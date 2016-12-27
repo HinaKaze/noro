@@ -37,16 +37,17 @@ func (c *ChatRoomManager) GetRoomDetail(roomId int) (detail *ChatRoomDetail) {
 
 type ChatRoomDetail struct {
 	ChatRoom
-	Mates []*UserDetail
+	Mates       []*UserDetail
+	HistoryMsgs []ChatMessage
 	sync.RWMutex
 }
 
 func (c *ChatRoomDetail) AddMate(u User, ws *websocket.Conn) bool {
 	c.Lock()
 	defer c.Unlock()
-	if c.MaxMember <= uint16(len(c.Mates)) {
-		return false
-	}
+	//	if c.MaxMember <= uint16(len(c.Mates)) {
+	//		return false
+	//	}
 	newUserDetail := &UserDetail{User: u, ws: ws}
 	//	for _, ou := range c.Mates {
 	//		if ou.Id == u.Id {
@@ -73,7 +74,17 @@ func (c *ChatRoomDetail) RemoveMate(uId int) {
 func (c *ChatRoomDetail) BroadcastMessage(m ChatMessage) {
 	c.RLock()
 	defer c.RUnlock()
-	for _, m := range c.Mates {
-		m.ws.WriteJSON(m)
+	if len(c.HistoryMsgs) >= 15 {
+		c.HistoryMsgs = append(c.HistoryMsgs[1:], m)
+	} else {
+		c.HistoryMsgs = append(c.HistoryMsgs, m)
+	}
+	index := 1
+	for i := range c.HistoryMsgs {
+		c.HistoryMsgs[i].Id = index
+		index++
+	}
+	for _, mate := range c.Mates {
+		mate.ws.WriteJSON(m)
 	}
 }

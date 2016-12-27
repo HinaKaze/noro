@@ -1,6 +1,14 @@
+<script type="text/javascript">
+	$(".card-content").click(function(){
+    	$.get("/chat_enter_room",function(data,status){
+        	$("#main_content").html(data);
+        });
+    }); 
+</script>
+
 {{range .List}}
 <div class="card">
-	<div class="card-content">
+	<div class="card-content" id="enter{{.Id}}">
 		<div class="card-date-box">
 		<span class="card-date-box-day">{{.CreateDay}}</span>
 		<br/>

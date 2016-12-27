@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"runtime/debug"
+	"sync/atomic"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -29,12 +31,14 @@ func (c *ChatRoomController) Get() {
 	c.ServeJSON()
 }
 
-type ChatMessagesController struct {
+type ChatEnterRoomController struct {
 	beego.Controller
 }
 
-func (c *ChatMessagesController) Get() {
-	c.TplName = "chat_messages.tpl"
+func (c *ChatEnterRoomController) Get() {
+	c.Data["HistoryMsgs"] = models.ChatRoomMgr.GetRoomDetail(1).HistoryMsgs
+	c.Data["HistoryMsgLength"] = len(models.ChatRoomMgr.GetRoomDetail(1).HistoryMsgs)
+	c.TplName = "chat_room.tpl"
 }
 
 type WebSocketController struct {
@@ -49,6 +53,8 @@ func (w *WebSocketController) Join() {
 	}()
 	roomDetail := models.ChatRoomMgr.GetRoomDetail(1)
 	user := models.GetUser(1)
+	user.Id = getUserId()
+	user.Name = fmt.Sprintf("user%d", user.Id)
 	ws, err := websocket.Upgrade(w.Ctx.ResponseWriter, w.Ctx.Request, nil, 1024, 1024)
 	if err != nil {
 		beego.BeeLogger.Error(err.Error())
@@ -56,14 +62,14 @@ func (w *WebSocketController) Join() {
 	}
 	defer func() {
 		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 1, User: user, Text: "", Time: time.Now().String()})
+		roomDetail.RemoveMate(user.Id)
 		err := ws.Close()
 		if err != nil {
 			beego.BeeLogger.Error(err.Error())
 			return
 		}
 	}()
-	ws.WriteMessage(websocket.TextMessage, []byte("aa"))
-	roomDetail.AddMate(models.GetUser(1), ws)
+	roomDetail.AddMate(user, ws)
 	roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 0, User: user, Text: "", Time: time.Now().String()})
 	for {
 		_, bytes, err := ws.ReadMessage()
@@ -72,4 +78,11 @@ func (w *WebSocketController) Join() {
 		}
 		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: user, Text: string(bytes), Time: time.Now().String()})
 	}
+}
+
+var userId uint32 = 0
+
+func getUserId() int {
+	atomic.AddUint32(&userId, 1)
+	return int(userId)
 }

@@ -2,8 +2,9 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes" />  
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <title>Noro chat room</title>
     <!-- Bootstrap -->
@@ -27,12 +28,7 @@
           $(document).ready(function(){
             $.get("/chat_rooms",function(data,status){
               $("#main_content").html(data);
-            });
-            $("#click").click(function(){
-              $.get("/chat_messages",function(data,status){
-              $("#main_content").html(data);
-            });
-            });     
+            });    
           });
     </script>
   </head>
@@ -42,9 +38,8 @@
       <div class="col-md-6 container" >
         <div style="text-align:center">
           <div class="jumbotron" style="color:#fff;background-color:#333">
-            <h2>noro chat room</h2>
+            <h1>NORO</h1>
             <h2>施工中</h2>
-            <button class="btn" id="click">进入房间</button>
           </div>
         </div>
         <div id="main_content" style="font-family:Hiragino Sans GB,Microsoft YaHei,宋体;line-height=150%"></div>

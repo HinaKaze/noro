@@ -17,7 +17,7 @@ type ChatRoom struct {
 
 type ChatMessage struct {
 	Id   int
-	Type uint8 //0 join,1 leave,2 message
+	Type int //0 join,1 leave,2 message
 	User User
 	Text string
 	Time string
