@@ -39,6 +39,9 @@ $(document).ready(function () {
 		}
 		$("#chat_send").click(function(){
 			var message = $("#chat_text").val()
+			if (message == ""){
+				return
+			}
 			ws.send(message)
 			$("#chat_text").val("")
 		});

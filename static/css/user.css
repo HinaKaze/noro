@@ -2,7 +2,7 @@ body {
     background-color: #f7f7f8;
 }
 
-.card {
+.room-detail {
     display: block;
     position: relative;
     background: #fff;
@@ -15,7 +15,7 @@ body {
     padding: 10px 20px;
 }
 
-.card-date-box {
+.room-date-box {
     display: block;
     position: absolute;
     top: 20px;
@@ -33,21 +33,21 @@ body {
     line-height: 90%;
 }
 
-.card-date-box:hover {
+.room-date-box:hover {
     color: #000000;
 }
 
-.card-date-box > .card-date-box-day {
+.room-date-box > .room-date-box-day {
     font-size: 36px;
     font-weight: bolder;
 }
 
-.card-date-box > .card-date-box-month {
+.room-date-box > .room-date-box-month {
     font-size: 12px;
     font-weight: normal;
 }
 
-.card-date-box > .card-date-box-year {
+.room-date-box > .room-date-box-year {
     font-size: 12px;
     font-weight: normal;
 }
@@ -90,7 +90,6 @@ body {
 	vertical-align: text-bottom;
 	background-color: #000;
 	margin: 0px 10px;
-	max-width: 70%;
 	border-radius:10px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
@@ -144,4 +143,11 @@ body {
 .chat-room{
 }
 
+#right_content{
+
+}
+
+.room-config{
+	display: none;
+}
 
