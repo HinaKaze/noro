@@ -1,27 +1,45 @@
 package models
 
 import (
+	"fmt"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/astaxie/beego"
 )
 
 func init() {
-	fakeUser1 := User{Id: 1, Name: "HinaKaze"}
-	fakeUser2 := User{Id: 2, Name: "Smilok"}
-	CreateUser(fakeUser1)
-	CreateUser(fakeUser2)
-	fakeChatRoom1 := ChatRoom{Id: 1, Name: "noro作战本部1", CreateTime: time.Now(), CreateDay: time.Now().Day(), CreateMonth: int(time.Now().Month()), CreateYear: time.Now().Year(), Creator: fakeUser1}
-	fakeChatRoom2 := ChatRoom{Id: 2, Name: "noro作战本部2", CreateTime: time.Now(), CreateDay: time.Now().Day(), CreateMonth: int(time.Now().Month()), CreateYear: time.Now().Year(), Creator: fakeUser2}
-	CreateRoom(fakeChatRoom1)
-	CreateRoom(fakeChatRoom2)
+	fakeUser0 := CreateUser("God", "")
+	fakeUser1 := CreateUser("HinaKaze", "HinaKaze")
+	fakeUser2 := CreateUser("Smilok", "Smilok")
+	SaveUser(fakeUser1)
+	SaveUser(fakeUser2)
+	fakeChatRoom := CreateRoom("Noro", fakeUser0, 0)
+	SaveRoom(fakeChatRoom)
 }
+
+var roomId int32 = 0
 
 var chatRoomMap map[int]*ChatRoom = make(map[int]*ChatRoom)
 var chatRoomMapMutex sync.RWMutex
 
-func CreateRoom(room ChatRoom) {
+func CreateRoom(topic string, creator User, maxMember int) (room ChatRoom) {
+	room.Id = int(atomic.AddInt32(&roomId, 1))
+	room.Topic = topic
+	room.Creator = creator
+	if maxMember > 100 {
+		maxMember = 100
+	}
+	room.MaxMember = uint16(maxMember)
+	room.CreateTime = time.Now()
+	room.CreateDay = room.CreateTime.Day()
+	room.CreateMonth = int(room.CreateTime.Month())
+	room.CreateYear = room.CreateTime.Year()
+	return
+}
+
+func SaveRoom(room ChatRoom) {
 	chatRoomMapMutex.Lock()
 	defer chatRoomMapMutex.Unlock()
 	if _, ok := chatRoomMap[room.Id]; ok {
@@ -44,13 +62,24 @@ func GetRooms() (chatRooms []ChatRoom) {
 func GetRoom(rId int) ChatRoom {
 	chatRoomMapMutex.RLock()
 	defer chatRoomMapMutex.RUnlock()
+	fmt.Println(chatRoomMap == nil)
 	return *chatRoomMap[rId]
 }
 
 var userMap map[int]*User = make(map[int]*User)
+var userMapByName map[string]*User = make(map[string]*User)
 var userMutex sync.RWMutex
+var userId int32
 
-func CreateUser(user User) {
+func CreateUser(name string, password string) (user User) {
+	user.Id = int(atomic.AddInt32(&userId, 1))
+	user.Name = name
+	user.Password = password
+	user.CanLogin = true
+	return
+}
+
+func SaveUser(user User) {
 	userMutex.Lock()
 	defer userMutex.Unlock()
 	if _, ok := userMap[user.Id]; ok {
@@ -58,11 +87,20 @@ func CreateUser(user User) {
 		return
 	}
 	userMap[user.Id] = &user
+	userMapByName[user.Name] = &user
 	return
 }
 
-func GetUser(uId int) User {
+func GetUser(uId int) (*User, bool) {
 	userMutex.RLock()
 	defer userMutex.RUnlock()
-	return *userMap[uId]
+	up, ok := userMap[uId]
+	return up, ok
+}
+
+func GetUserByName(name string) (*User, bool) {
+	userMutex.RLock()
+	defer userMutex.RUnlock()
+	up, ok := userMapByName[name]
+	return up, ok
 }

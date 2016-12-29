@@ -3,7 +3,6 @@ package controllers
 import (
 	"fmt"
 	"runtime/debug"
-	"sync/atomic"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -11,34 +10,22 @@ import (
 	"github.com/hinakaze/noro/models"
 )
 
-type ChatRoomsController struct {
-	beego.Controller
-}
-
-func (c *ChatRoomsController) Get() {
-	c.Data["List"] = models.GetRooms()
-	c.Data["Title"] = "作戦本部"
-	c.TplName = "chat_rooms.tpl"
-}
-
 type ChatRoomController struct {
 	beego.Controller
 }
 
 func (c *ChatRoomController) Get() {
-	fakeChatRoomDetail := models.ChatRoomMgr.GetRoomDetail(1)
-	c.Data["json"] = &fakeChatRoomDetail
-	c.ServeJSON()
-}
-
-type ChatEnterRoomController struct {
-	beego.Controller
-}
-
-func (c *ChatEnterRoomController) Get() {
-	c.Data["HistoryMsgs"] = models.ChatRoomMgr.GetRoomDetail(1).HistoryMsgs
-	c.Data["HistoryMsgLength"] = len(models.ChatRoomMgr.GetRoomDetail(1).HistoryMsgs)
-	c.TplName = "chat_room.tpl"
+	roomId, err := c.GetInt("room_id")
+	if err != nil {
+		panic(err.Error())
+	}
+	c.SetSession("room_id", roomId)
+	roomDetail := models.ChatRoomMgr.GetRoomDetail(roomId)
+	if roomDetail == nil {
+		panic(fmt.Sprintf("Room [%d] invalid", roomId))
+	}
+	c.Data["RoomDetail"] = *roomDetail
+	c.TplName = "chat_room.html"
 }
 
 type WebSocketController struct {
@@ -52,9 +39,12 @@ func (w *WebSocketController) Join() {
 		}
 	}()
 	roomDetail := models.ChatRoomMgr.GetRoomDetail(1)
-	user := models.GetUser(1)
-	user.Id = getUserId()
-	user.Name = fmt.Sprintf("user%d", user.Id)
+	userp, ok := w.GetSession("user").(*models.User)
+	user := *userp
+	if !ok {
+		w.Redirect("/login", 302)
+		return
+	}
 	ws, err := websocket.Upgrade(w.Ctx.ResponseWriter, w.Ctx.Request, nil, 1024, 1024)
 	if err != nil {
 		beego.BeeLogger.Error(err.Error())
@@ -78,11 +68,4 @@ func (w *WebSocketController) Join() {
 		}
 		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: user, Text: string(bytes), Time: time.Now().String()})
 	}
-}
-
-var userId uint32 = 0
-
-func getUserId() int {
-	atomic.AddUint32(&userId, 1)
-	return int(userId)
 }

@@ -6,10 +6,10 @@ import (
 
 type ChatRoom struct {
 	Id          int
-	Name        string
+	Topic       string
 	Creator     User
+	MaxMember   uint16 // <= 0 unlimited
 	CreateTime  time.Time
-	MaxMember   uint16
 	CreateDay   int
 	CreateMonth int
 	CreateYear  int

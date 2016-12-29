@@ -7,8 +7,9 @@ import (
 
 func init() {
 	beego.Router("/", &controllers.MainController{})
-	beego.Router("/chat_rooms", &controllers.ChatRoomsController{})
+	beego.Router("/login", &controllers.LoginController{})
+	beego.Router("/register", &controllers.RegisterController{})
+	beego.Router("/chat_lobby", &controllers.ChatLobbyController{})
 	beego.Router("/chat_room", &controllers.ChatRoomController{})
-	beego.Router("/chat_enter_room", &controllers.ChatEnterRoomController{})
 	beego.Router("/ws", &controllers.WebSocketController{}, "get:Join")
 }
