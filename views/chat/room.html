@@ -1,0 +1,127 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    var chatRoomDetail = {
+        "Id": {{.RoomDetail.Id}},
+        "Topic": {{.RoomDetail.Topic}},
+        "Creator": {{.RoomDetail.Creator}},
+        "MaxMember": {{.RoomDetail.MaxMember}},
+        "CreateTime":{{.RoomDetail.CreateTime}},
+        "Mates": {{.RoomDetail.Mates}},
+        "HistoryMsgs" : {{.RoomDetail.HistoryMsgs}},
+        "MsgIndex" : 0,
+    };
+    var ws = new WebSocket('ws://' + window.location.host + '/chat/ws');
+    ws.onmessage = function(event) {
+        var data = JSON.parse(event.data)
+        showNewMsg(data)
+    };
+    ws.onclose = function(event) {
+        console.log("ws cloesed!")
+        $.get("/chat/room?id="+chatRoomDetail.Id,function(data,status){
+            $("#main_content").html(data);
+        });
+    };
+
+    function addMessage(type, user, text, time) {
+        chatRoomDetail.MsgIndex += 1;
+        switch (type) {
+            case 0: //join
+                addJoin(user)
+                break;
+            case 1: //leave
+                addLeave(user)
+                break;
+            case 2: //message
+                addText(user, text, time)
+                break;
+        }
+    }
+
+    function addText(user, text, time) {
+        var http = '\
+        <div class="message" id="message' + chatRoomDetail.MsgIndex + '">\
+            <div class="message-user">\
+                <img class="message-user-avatar" src="static/img/user/avatar1.jpg"></img>\
+                <div class="message-user-name">' + user.Name + '</div>\
+            </div>\
+            <div class="message-content">\
+                <div class="message-content-text text">' + text + '</div>\
+                <div class="message-content-time">' + time + '</div>\
+            </div>\
+        </div>\
+        '
+        $("#messages").append(http)
+    }
+
+    function addJoin(user) {
+        var http = '<div class="chat-tip" id="message' + chatRoomDetail.MsgIndex + '">' + user.Name + ' 加入 房间</div>'
+        $("#messages").append(http)
+        chatRoomDetail.Mates.push(user);
+        showRoomMates()
+    }
+
+    function addLeave(user) {
+        var http = '<div class="chat-tip" id="message' + chatRoomDetail.MsgIndex + '">' + user.Name + ' 离开 房间</div>'
+        $("#messages").append(http)
+        for (i in chatRoomDetail.Mates) {
+            if (chatRoomDetail.Mates[i].Name == user.Name) {
+                chatRoomDetail.Mates.splice(i, 1)
+                break;
+            }
+        }
+        showRoomMates()
+    }
+
+    function showHistoryMsgs() {
+        for (hm of chatRoomDetail.HistoryMsgs) {
+            addMessage(hm.Type, hm.User, hm.Text, hm.Time);
+        }
+        //scrollLastMessage(chatRoomDetail.MsgIndex)
+    }
+    function showNewMsg(data){
+        addMessage(data.Type, data.User, data.Text, data.Time)
+        scrollLastMessage(chatRoomDetail.MsgIndex)
+    }
+
+
+    function showRoomMates() {
+        $("#left_content").html('');
+        for (u of chatRoomDetail.Mates) {
+            if (u != undefined) {
+                var http = '\
+                <div><span class="glyphicon glyphicon-user"></span>\
+                <span class="chat-room-mate">' + u.Name + '</span></div>\
+            ';
+            $("#left_content").append(http);
+            }
+        }
+    }
+
+    function scrollLastMessage(index){
+        if (chatRoomDetail.MsgIndex <= 0){
+            return
+        }
+        $("html,body").animate({
+            scrollTop: $("#message" + chatRoomDetail.MsgIndex).offset().top
+        }, 500)
+    }
+    showHistoryMsgs();
+    showRoomMates();
+    $("#chat_send").click(function() {
+        var message = $("#chat_text").val()
+        if (message == "") {
+            return
+        }
+        ws.send(message)
+        $("#chat_text").val("")
+    });
+})
+</script>
+<div class="chat-room">
+    <div id="messages">
+    </div>
+    <div class="input-box">
+        <input type="text" id="chat_text" placeholder="输入消息"></input>
+        <button type="button" id="chat_send" class="btn btn-warning">发送</button>
+    </div>
+</div>

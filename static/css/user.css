@@ -2,14 +2,29 @@ body {
     background-color: #f7f7f8;
 }
 
-.room-detail {
+.main-title{
+	color:#fff;
+	background-color:#333;
+	box-shadow : 0 1px 2px rgba(0, 0, 0, 0.3);
+	padding: 45px 30px;
+	border-radius: 5px;
+}
+
+.main-title h1{
+	font-size: 60px;
+}
+
+.main-title h2{
+	font-size: 30px;
+}
+
+.room-content {
     display: block;
     position: relative;
     background: #fff;
     min-height: 100px;
     width: 100%;
-    max-width: 1000px;
-    margin: 10px auto;
+    margin: 10px 0;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 10px 20px;
@@ -20,14 +35,14 @@ body {
     position: absolute;
     top: 20px;
     right: 20px;
-    height: auto;
+    height: 80px;
     width: 80px;
+    padding-top: 20px;
     background-color: #e9e9ec;
-    border-radius: 40px;
-    padding: 25px 0 0 0;
+    border-radius: 50%;
     text-align: center;
     font-size: 18px;
-    color: #666666;
+    color: #666;
     transition: 0.3s ease color;
     cursor: default;
     line-height: 90%;
@@ -37,17 +52,17 @@ body {
     color: #000000;
 }
 
-.room-date-box > .room-date-box-day {
+.room-date-box-day {
     font-size: 36px;
     font-weight: bolder;
 }
 
-.room-date-box > .room-date-box-month {
+.room-date-box-month {
     font-size: 12px;
     font-weight: normal;
 }
 
-.room-date-box > .room-date-box-year {
+.room-date-box-year {
     font-size: 12px;
     font-weight: normal;
 }
@@ -88,7 +103,7 @@ body {
 .message-content{
 	display: inline-block;
 	vertical-align: text-bottom;
-	background-color: #000;
+	background-color: #333;
 	margin: 0px 10px;
 	border-radius:10px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -96,36 +111,37 @@ body {
 
 .message-content-text{
 	color: yellow;
-	padding: 5px 30px;
+	padding: 5px 10px;
 	font-size: 20px;
 	line-height: 100%;
 }
 
 .message-content-time{
 	color: #fff;
-	padding: 10px 30px;
+	padding: 5px 10px;
 	font-size: 10px;
 }
 
 .chat-tip{
 	margin: 10px 0px;
+	vertical-align: center;
 	display: block;
 	padding: 5px 10px;
-	background-color: #000;
+	background-color: #333;
 	height: auto;
 	text-align: center;
 	color: yellow;
 	border-radius: 10px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	font-size: 15px;
-	width: 100%;
+	width: auto;
 }
 
 .input-box{
 	display: block;
 	position: fixed;
 	padding: 5px 10px;
-	background-color: black;
+	background-color: #333;
 	bottom: 0px;
 	border-radius: 5px;
 	left: 5%;

@@ -39,7 +39,18 @@ func (u *User) GenerateNewLoginToken() {
 	u.LoginToken = fmt.Sprintf("%x", m5.Sum([]byte(string(time.Now().Unix())+u.Name)))
 }
 
+func (u *User) ToT() (t TUser) {
+	t.Id = u.Id
+	t.Name = u.Name
+	return
+}
+
 type UserDetail struct {
 	User
 	ws *websocket.Conn
+}
+
+type TUser struct {
+	Id   int
+	Name string
 }

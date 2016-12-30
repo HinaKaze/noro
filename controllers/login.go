@@ -25,7 +25,7 @@ func (c *LoginController) Post() {
 			c.SetSecureCookie("noro_", "_n", user.Name)
 			c.SetSecureCookie("noro_", "_s", user.LoginSequence)
 			c.SetSecureCookie("noro_", "_t", user.LoginToken)
-			c.Redirect("/chat_lobby", 302)
+			c.Redirect("/chat/lobby", 302)
 		} else {
 			c.Redirect("/login", 302)
 		}

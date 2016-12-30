@@ -7,22 +7,28 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>Noro chat room</title>
+    <title>Noro project</title>
     <!-- Bootstrap -->
-    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+    <!--    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">-->
     <!-- 新 Bootstrap 核心 CSS 文件 -->
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <!-- 可选的Bootstrap主题文件（一般不用引入） -->
-    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <!--    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">-->
     <link rel="stylesheet" href="static/css/user.css">
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
     <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
     <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="static/js/util.js"></script>
     <script>
     $(document).ready(function() {
-        $.get("/chat_lobby", function(data, status) {
+        $.get("/chat/lobby", function(data, status) {
             $("#main_content").html(data);
+        });
+        $("#main_back").click(function() {
+            $.get("/chat/lobby", function(data, status) {
+                $("#main_content").html(data);
+            });
         });
     });
     </script>
@@ -33,14 +39,14 @@
     <div class="col-md-3" id="left_content"></div>
     <div class="col-md-6 container">
         <div style="text-align:center">
-            <div class="jumbotron" style="color:#fff;background-color:#333">
+            <div class="main-title">
                 <h1>NORO</h1>
-                <h2>施工中</h2>
+                <h2>Happy New Year</h2>
+                <div class="glyphicon glyphicon-chevron-left" id="main_back" class="main-back" style="float: left;color: #fff"></div>
+                <div class="glyphicon glyphicon-chevron-right" id="main_forward" class="main_forward" style="float: right;color: #fff"></div>
             </div>
         </div>
-        <frame frameborder="0" name="main_content">
-          <div id="main_content" style="font-family:Hiragino Sans GB,Microsoft YaHei,宋体;line-height=150%"></div>
-        </frame>
+        <div id="main_content" style="font-family:Hiragino Sans GB,Microsoft YaHei,宋体;line-height=150%"></div>
     </div>
     <div class="col-md-3" id="right_content"></div>
 </body>

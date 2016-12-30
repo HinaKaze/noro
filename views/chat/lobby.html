@@ -1,0 +1,69 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    var rooms = {{.RoomList}}
+
+    $("#create_room_btn").click(function() {
+        $("#room_config").toggle(500)
+    });
+    $('#create_room_form').submit(function(event){
+        event.preventDefault();
+        $.post("/chat/room",$(this).serialize(), function(data, status) {
+            console.log(status,data)
+            if (status == "success"){ 
+                addRoom(data)
+            }
+        });
+    });
+
+    function addRoom(room) {
+        var http = '\
+        <div class="room-content" id=' + room.Id + '>\
+            <div class="room-date-box">\
+                <span class="room-date-box-day">' + room.CreateDay + '</span>\
+                <br/>\
+                <span class="room-date-box-month">' + room.CreateMonth + '</span>\
+                <span class="room-date-box-year">' + room.CreateYear + '</span>\
+            </div>\
+            <h1>\
+            <strong>' + room.Id + '.' + room.Topic + '</strong>\
+        </h1>\
+            <small>创建者：' + room.Creator.Name + '</small>\
+        </div>'
+        $("#room_list").append(http);
+    };
+
+    function showRooms() {
+        for (room of rooms) {
+            addRoom(room)
+            $(".room-content").click(function() {
+                var room_id = $(this).attr("id")
+                $.get("/chat/room?id=" + room_id, function(data, status) {
+                    $("#main_content").html(data);
+                });
+            });
+        }
+    }
+    showRooms();
+});
+</script>
+<div class="lobby">
+    <div style="height: 25px">
+        <div class="glyphicon glyphicon-plus" id="create_room_btn" style="margin:10px 5px 0 0;float: right;"></div>
+    </div>
+    <div id="room_config" class="room-config">
+        <h3 style="text-align:center;">新建房间</h3>
+        <form role="form" method="post" action="post" id="create_room_form">
+            <div class="form-group" action="create_room">
+                <label for="room_topic">Topic</label>
+                <input type="text" class="form-control" id="room_title" name="topic" placeholder="Please input room topic!" />
+            </div>
+            <div class="form-group">
+                <label for="room_maxmember">MaxMember</label>
+                <input type="text" class="form-control" id="room_maxmember" name="maxmember" placeholder="Please input room max member size!">
+            </div>
+            <button type="submit" class="btn btn-primary" id="create_room_btn">Create!</button>
+        </form>
+    </div>
+    <div id="room_list">
+    </div>
+</div>

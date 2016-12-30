@@ -11,7 +11,9 @@ var ChatRoomMgr *ChatRoomManager
 func init() {
 	ChatRoomMgr = new(ChatRoomManager)
 	ChatRoomMgr.RoomMap = make(map[int]*ChatRoomDetail)
-	ChatRoomMgr.AddRoomDetail(GetRoom(1))
+	if room, ok := GetRoom(1); ok {
+		ChatRoomMgr.AddRoomDetail(*room)
+	}
 }
 
 type ChatRoomManager struct {
@@ -19,22 +21,28 @@ type ChatRoomManager struct {
 	sync.RWMutex
 }
 
-func (c *ChatRoomManager) AddRoomDetail(room ChatRoom) {
+func (c *ChatRoomManager) AddRoomDetail(room ChatRoom) *ChatRoomDetail {
 	c.Lock()
 	defer c.Unlock()
-	if _, ok := c.RoomMap[room.Id]; ok {
-		return
-	}
 	var newDetail = ChatRoomDetail{ChatRoom: room}
 	newDetail.Init()
 	c.RoomMap[room.Id] = &newDetail
-	return
+	return &newDetail
 }
 
-func (c *ChatRoomManager) GetRoomDetail(roomId int) (detail *ChatRoomDetail) {
+func (c *ChatRoomManager) GetRoomDetail(roomId int) (detail *ChatRoomDetail, ok bool) {
 	c.RLock()
 	defer c.RUnlock()
-	return c.RoomMap[roomId]
+	if detail, ok = c.RoomMap[roomId]; ok {
+		return
+	} else {
+		if room, ok := GetRoom(roomId); ok {
+			detail = c.AddRoomDetail(*room)
+			return detail, true
+		} else {
+			return nil, false
+		}
+	}
 }
 
 type ChatRoomDetail struct {
@@ -91,7 +99,27 @@ func (c *ChatRoomDetail) BroadcastMessage(m ChatMessage) {
 		c.HistoryMsgs[i].Id = index
 		index++
 	}
+	tm := m.ToT()
 	for _, mate := range c.Mates {
-		mate.ws.WriteJSON(m)
+		mate.ws.WriteJSON(tm)
 	}
+}
+
+type TChatRoomDetail struct {
+	TChatRoom
+	Mates       []TUser
+	HistoryMsgs []TChatMessage
+}
+
+func (c *ChatRoomDetail) ToT() (t TChatRoomDetail) {
+	t.TChatRoom = c.ChatRoom.ToT()
+	t.Mates = make([]TUser, 0)
+	for _, u := range c.Mates {
+		t.Mates = append(t.Mates, u.ToT())
+	}
+	t.HistoryMsgs = make([]TChatMessage, 0)
+	for _, c := range c.HistoryMsgs {
+		t.HistoryMsgs = append(t.HistoryMsgs, c.ToT())
+	}
+	return
 }

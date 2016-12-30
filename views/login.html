@@ -2,13 +2,21 @@
 $(document).ready(function() {
     $("#register_btn").click(function() {
         $.get("/register", function(data, status) {
+            console.log(status)
+            $("#main_content").html(data);
+        });
+    });
+    $("#login_form").submit(function(event) {
+        event.preventDefault();
+        $.post("/login",$(this).serialize(), function(data, status) {
             $("#main_content").html(data);
         });
     });
 });
 </script>
+<h3 style="text-align: center">请登陆</h3>
 <div id="login" class="login">
-    <form role="form" method="post" action="login">
+    <form role="form" method="post" action="login" id="login_form">
         <div class="form-group">
             <label for="user_name">Username</label>
             <input type="text" class="form-control" id="user_name" name="username" placeholder="Please input username!" />
@@ -17,7 +25,9 @@ $(document).ready(function() {
             <label for="user_password">Password</label>
             <input type="password" class="form-control" id="user_password" name="password" placeholder="Please input password !">
         </div>
-        <button type="submit" class="btn btn-primary">Login!</button>
+        <button type="submit" class="btn btn-primary" id="login_btn">Login!</button>
         <button type="button" class="btn btn-warning" id="register_btn">Register!</button>
     </form>
 </div>
+
+

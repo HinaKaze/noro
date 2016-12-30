@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -33,9 +32,6 @@ func CreateRoom(topic string, creator User, maxMember int) (room ChatRoom) {
 	}
 	room.MaxMember = uint16(maxMember)
 	room.CreateTime = time.Now()
-	room.CreateDay = room.CreateTime.Day()
-	room.CreateMonth = int(room.CreateTime.Month())
-	room.CreateYear = room.CreateTime.Year()
 	return
 }
 
@@ -59,11 +55,11 @@ func GetRooms() (chatRooms []ChatRoom) {
 	return
 }
 
-func GetRoom(rId int) ChatRoom {
+func GetRoom(rId int) (room *ChatRoom, ok bool) {
 	chatRoomMapMutex.RLock()
 	defer chatRoomMapMutex.RUnlock()
-	fmt.Println(chatRoomMap == nil)
-	return *chatRoomMap[rId]
+	room, ok = chatRoomMap[rId]
+	return
 }
 
 var userMap map[int]*User = make(map[int]*User)
