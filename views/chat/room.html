@@ -10,18 +10,30 @@ $(document).ready(function() {
         "HistoryMsgs" : {{.RoomDetail.HistoryMsgs}},
         "MsgIndex" : 0,
     };
-    var ws = new WebSocket('ws://' + window.location.host + '/chat/ws');
-    ws.onmessage = function(event) {
-        var data = JSON.parse(event.data)
-        showNewMsg(data)
-    };
-    ws.onclose = function(event) {
-        console.log("ws cloesed!")
-        $.get("/chat/room?id="+chatRoomDetail.Id,function(data,status){
+   
+    if (noro.lastRoomId != chatRoomDetail.Id || noro.roomWS == undefined) {
+        if (noro.roomWS != undefined){
+            noro.roomWS.close();
+        }
+        noro.roomWS = new WebSocket('ws://' + window.location.host + '/chat/ws');
+        noro.roomWS.onmessage = function(event) {
+            var data = JSON.parse(event.data)
+            showNewMsg(data)
+        };
+        // noro.roomWS.onclose = function(event) {
+        //     console.log("ws cloesed!")
+        //     $.get("/chat/room?id=" + chatRoomDetail.Id, function(data, status) {
+        //         $("#main_content").html(data);
+        //     });
+        // };
+        noro.lastRoomId = chatRoomDetail.Id;
+    }
+
+    $("#main_back").click(function() {
+        $.get("/chat/lobby", function(data, status) {
             $("#main_content").html(data);
         });
-    };
-
+    });
     function addMessage(type, user, text, time) {
         chatRoomDetail.MsgIndex += 1;
         switch (type) {
@@ -78,7 +90,8 @@ $(document).ready(function() {
         }
         //scrollLastMessage(chatRoomDetail.MsgIndex)
     }
-    function showNewMsg(data){
+
+    function showNewMsg(data) {
         addMessage(data.Type, data.User, data.Text, data.Time)
         scrollLastMessage(chatRoomDetail.MsgIndex)
     }
@@ -92,13 +105,13 @@ $(document).ready(function() {
                 <div><span class="glyphicon glyphicon-user"></span>\
                 <span class="chat-room-mate">' + u.Name + '</span></div>\
             ';
-            $("#left_content").append(http);
+                $("#left_content").append(http);
             }
         }
     }
 
-    function scrollLastMessage(index){
-        if (chatRoomDetail.MsgIndex <= 0){
+    function scrollLastMessage(index) {
+        if (chatRoomDetail.MsgIndex <= 0) {
             return
         }
         $("html,body").animate({
@@ -112,8 +125,20 @@ $(document).ready(function() {
         if (message == "") {
             return
         }
-        ws.send(message)
+        noro.roomWS.send(message)
         $("#chat_text").val("")
+    });
+    $("#chat_text").keydown(function(e) {
+        console.log(e.keyCode);
+        //enter trigger
+        if (e.keyCode == 13){
+             var message = $("#chat_text").val()
+            if (message == "") {
+                return
+            }
+            noro.roomWS.send(message)
+            $("#chat_text").val("")
+        }
     });
 })
 </script>
@@ -121,7 +146,7 @@ $(document).ready(function() {
     <div id="messages">
     </div>
     <div class="input-box">
-        <input type="text" id="chat_text" placeholder="输入消息"></input>
+        <input type="text" id="chat_text" placeholder="输入消息" ></input>
         <button type="button" id="chat_send" class="btn btn-warning">发送</button>
     </div>
 </div>

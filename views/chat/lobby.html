@@ -1,23 +1,21 @@
 <script type="text/javascript">
 $(document).ready(function() {
-    var rooms = {{.RoomList}}
+     var rooms = {{.RoomList}}
 
     $("#create_room_btn").click(function() {
         $("#room_config").toggle(500)
     });
-    $('#create_room_form').submit(function(event){
+    $('#create_room_form').submit(function(event) {
         event.preventDefault();
-        $.post("/chat/room",$(this).serialize(), function(data, status) {
-            console.log(status,data)
-            if (status == "success"){ 
-                addRoom(data)
-            }
+        $.post("/chat/room", $(this).serialize(), function(data, status) {
+            var room = JSON.parse(data);
+            addRoom(room)
         });
     });
 
     function addRoom(room) {
         var http = '\
-        <div class="room-content" id=' + room.Id + '>\
+        <div class="room-content" id="room' + room.Id + '">\
             <div class="room-date-box">\
                 <span class="room-date-box-day">' + room.CreateDay + '</span>\
                 <br/>\
@@ -30,17 +28,18 @@ $(document).ready(function() {
             <small>创建者：' + room.Creator.Name + '</small>\
         </div>'
         $("#room_list").append(http);
+        (function(roomId) {
+                $("#room" + roomId).click(function() {
+                    $.get("chat/room?id=" + roomId, function(data, status) {
+                        $("#main_content").html(data);
+                    });
+                });
+        })(room.Id)
     };
 
     function showRooms() {
         for (room of rooms) {
-            addRoom(room)
-            $(".room-content").click(function() {
-                var room_id = $(this).attr("id")
-                $.get("/chat/room?id=" + room_id, function(data, status) {
-                    $("#main_content").html(data);
-                });
-            });
+            addRoom(room);
         }
     }
     showRooms();

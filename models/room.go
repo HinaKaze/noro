@@ -10,6 +10,7 @@ var ChatRoomMgr *ChatRoomManager
 
 func init() {
 	ChatRoomMgr = new(ChatRoomManager)
+	ChatRoomMgr.Init()
 	ChatRoomMgr.RoomMap = make(map[int]*ChatRoomDetail)
 	if room, ok := GetRoom(1); ok {
 		ChatRoomMgr.AddRoomDetail(*room)
@@ -18,12 +19,23 @@ func init() {
 
 type ChatRoomManager struct {
 	RoomMap map[int]*ChatRoomDetail
-	sync.RWMutex
+	rwmutex *sync.RWMutex
+}
+
+func (c *ChatRoomManager) Init() {
+	c.rwmutex = new(sync.RWMutex)
 }
 
 func (c *ChatRoomManager) AddRoomDetail(room ChatRoom) *ChatRoomDetail {
-	c.Lock()
-	defer c.Unlock()
+	c.rwmutex.Lock()
+	defer c.rwmutex.Unlock()
+	var newDetail = ChatRoomDetail{ChatRoom: room}
+	newDetail.Init()
+	c.RoomMap[room.Id] = &newDetail
+	return &newDetail
+}
+
+func (c *ChatRoomManager) addRoomDetail(room ChatRoom) *ChatRoomDetail {
 	var newDetail = ChatRoomDetail{ChatRoom: room}
 	newDetail.Init()
 	c.RoomMap[room.Id] = &newDetail
@@ -31,13 +43,13 @@ func (c *ChatRoomManager) AddRoomDetail(room ChatRoom) *ChatRoomDetail {
 }
 
 func (c *ChatRoomManager) GetRoomDetail(roomId int) (detail *ChatRoomDetail, ok bool) {
-	c.RLock()
-	defer c.RUnlock()
+	c.rwmutex.RLock()
+	defer c.rwmutex.RUnlock()
 	if detail, ok = c.RoomMap[roomId]; ok {
 		return
 	} else {
 		if room, ok := GetRoom(roomId); ok {
-			detail = c.AddRoomDetail(*room)
+			detail = c.addRoomDetail(*room)
 			return detail, true
 		} else {
 			return nil, false

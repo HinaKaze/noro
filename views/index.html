@@ -25,11 +25,6 @@
         $.get("/chat/lobby", function(data, status) {
             $("#main_content").html(data);
         });
-        $("#main_back").click(function() {
-            $.get("/chat/lobby", function(data, status) {
-                $("#main_content").html(data);
-            });
-        });
     });
     </script>
 </head>

@@ -21,7 +21,7 @@ func init() {
 var roomId int32 = 0
 
 var chatRoomMap map[int]*ChatRoom = make(map[int]*ChatRoom)
-var chatRoomMapMutex sync.RWMutex
+var chatRoomMapMutex *sync.RWMutex = new(sync.RWMutex)
 
 func CreateRoom(topic string, creator User, maxMember int) (room ChatRoom) {
 	room.Id = int(atomic.AddInt32(&roomId, 1))
@@ -64,7 +64,7 @@ func GetRoom(rId int) (room *ChatRoom, ok bool) {
 
 var userMap map[int]*User = make(map[int]*User)
 var userMapByName map[string]*User = make(map[string]*User)
-var userMutex sync.RWMutex
+var userMutex *sync.RWMutex = new(sync.RWMutex)
 var userId int32
 
 func CreateUser(name string, password string) (user User) {
