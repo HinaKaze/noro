@@ -9,6 +9,7 @@ $(document).ready(function() {
         "Mates": {{.RoomDetail.Mates}},
         "HistoryMsgs" : {{.RoomDetail.HistoryMsgs}},
         "MsgIndex" : 0,
+        "Myself":{{.RoomDetail.Myself}},
     };
    
     if (noro.lastRoomId != chatRoomDetail.Id || noro.roomWS == undefined) {
@@ -53,7 +54,7 @@ $(document).ready(function() {
         var http = '\
         <div class="message" id="message' + chatRoomDetail.MsgIndex + '">\
             <div class="message-user">\
-                <img class="message-user-avatar" src="static/img/user/avatar1.jpg"></img>\
+                <img class="message-user-avatar" src="static/img/user/avatar'+user.Id+'.jpg"></img>\
                 <div class="message-user-name">' + user.Name + '</div>\
             </div>\
             <div class="message-content">\
@@ -145,8 +146,19 @@ $(document).ready(function() {
 <div class="chat-room">
     <div id="messages">
     </div>
-    <div class="input-box">
-        <input type="text" id="chat_text" placeholder="输入消息" ></input>
-        <button type="button" id="chat_send" class="btn btn-warning">发送</button>
+    <div class="input-controller">
+        <img class="input-avatar" src="static/img/user/avatar{{.RoomDetail.Myself.Id}}.jpg"></img>
+        <div class="input-box">
+            <input type="text" id="chat_text" placeholder="说点什么吧..." ></input>
+            <button type="button" id="chat_send" class="btn btn-warning">发送</button>
+        </div>
+        <div class="input-menu">
+            <span class="glyphicon glyphicon-search" style="color:#fff"></span>
+            <span class="glyphicon glyphicon-user" style="color:#fff"></span>
+            <span class="glyphicon glyphicon-camera" style="color:#fff"></span>
+            <span class="glyphicon glyphicon-map-marker" style="color:#fff"></span>
+            <span class="glyphicon glyphicon-shopping-cart" style="color:#fff"></span>
+            <span class="glyphicon glyphicon-fullscreen" style="color:#fff"></span>
+        </div>
     </div>
 </div>

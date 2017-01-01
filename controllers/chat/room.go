@@ -21,11 +21,17 @@ func (c *ChatRoomController) Get() {
 		panic(err.Error())
 	}
 	c.SetSession("roomId", roomId)
+
+	userp, ok := c.GetSession("user").(*models.User)
+	if !ok {
+		c.Redirect("/login", 302)
+		return
+	}
 	roomDetail, ok := models.ChatRoomMgr.GetRoomDetail(roomId)
 	if roomDetail == nil || !ok {
 		panic(fmt.Sprintf("Room [%d] invalid", roomId))
 	}
-	c.Data["RoomDetail"] = roomDetail.ToT()
+	c.Data["RoomDetail"] = roomDetail.ToT(*userp)
 	c.TplName = "chat/room.html"
 }
 

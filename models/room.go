@@ -121,9 +121,10 @@ type TChatRoomDetail struct {
 	TChatRoom
 	Mates       []TUser
 	HistoryMsgs []TChatMessage
+	Myself      TUser
 }
 
-func (c *ChatRoomDetail) ToT() (t TChatRoomDetail) {
+func (c *ChatRoomDetail) ToT(myself User) (t TChatRoomDetail) {
 	t.TChatRoom = c.ChatRoom.ToT()
 	t.Mates = make([]TUser, 0)
 	for _, u := range c.Mates {
@@ -133,5 +134,6 @@ func (c *ChatRoomDetail) ToT() (t TChatRoomDetail) {
 	for _, c := range c.HistoryMsgs {
 		t.HistoryMsgs = append(t.HistoryMsgs, c.ToT())
 	}
+	t.Myself = myself.ToT()
 	return
 }

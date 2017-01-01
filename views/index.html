@@ -11,36 +11,45 @@
     <!-- Bootstrap -->
     <!--    <link href="//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">-->
     <!-- 新 Bootstrap 核心 CSS 文件 -->
-    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
     <!-- 可选的Bootstrap主题文件（一般不用引入） -->
     <!--    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">-->
     <link rel="stylesheet" href="static/css/user.css">
+    <link rel="stylesheet" href="static/css/ukagaka.css">
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="static/js/jquery-1.11.3.min.js"></script>
     <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/ukagaka.js"></script>
     <script src="static/js/util.js"></script>
     <script>
     $(document).ready(function() {
         $.get("/chat/lobby", function(data, status) {
             $("#main_content").html(data);
         });
+        Ukagaka.init({
+            'site_path': "./", //must end with '/'
+            'shell_width': "140",
+            'shell_height': "200",
+            'ghost_name': "default",
+            'append_obj': $("body"),
+        });
     });
     </script>
 </head>
 
-<body style="padding-top:10px">
+<body>
+    <div style="text-align:center">
+        <div class="main-title">
+            <h1>NORO</h1>
+            <h2>Happy New Year</h2>
+            <div class="glyphicon glyphicon-chevron-left" id="main_back" class="main-back" style="float: left;color: #000"></div>
+            <div class="glyphicon glyphicon-chevron-right" id="main_forward" class="main_forward" style="float: right;color: #000"></div>
+        </div>
+    </div>
     <!-- <div class="row"> -->
     <div class="col-md-3" id="left_content"></div>
     <div class="col-md-6 container">
-        <div style="text-align:center">
-            <div class="main-title">
-                <h1>NORO</h1>
-                <h2>Happy New Year</h2>
-                <div class="glyphicon glyphicon-chevron-left" id="main_back" class="main-back" style="float: left;color: #fff"></div>
-                <div class="glyphicon glyphicon-chevron-right" id="main_forward" class="main_forward" style="float: right;color: #fff"></div>
-            </div>
-        </div>
         <div id="main_content" style="font-family:Hiragino Sans GB,Microsoft YaHei,宋体;line-height=150%"></div>
     </div>
     <div class="col-md-3" id="right_content"></div>

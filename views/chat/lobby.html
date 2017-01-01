@@ -22,9 +22,7 @@ $(document).ready(function() {
                 <span class="room-date-box-month">' + room.CreateMonth + '</span>\
                 <span class="room-date-box-year">' + room.CreateYear + '</span>\
             </div>\
-            <h1>\
-            <strong>' + room.Id + '.' + room.Topic + '</strong>\
-        </h1>\
+            <div class="room-title">' + room.Id + '.' + room.Topic + '</div>\
             <small>创建者：' + room.Creator.Name + '</small>\
         </div>'
         $("#room_list").append(http);
