@@ -34,6 +34,11 @@
             'ghost_name': "default",
             'append_obj': $("body"),
         });
+        $("#main_forward").click(function() {
+        $.get("/house/game", function(data, status) {
+            $("#main_content").html(data);
+        });
+    });
     });
     </script>
 </head>

@@ -11,3 +11,7 @@ class Noro {
 }
 
 var noro = new Noro();
+
+$('.removeTextNodes').contents().filter(function() {
+    return this.nodeType === 3;
+}).remove();
