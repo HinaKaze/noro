@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	//"github.com/astaxie/beego/orm"
+	_ "github.com/lib/pq"
 )
 
 func init() {
@@ -17,6 +19,13 @@ func init() {
 	fakeChatRoom := CreateRoom("Noro", fakeUser0, 0)
 	SaveRoom(fakeChatRoom)
 }
+
+//func init() {
+//	orm.Debug = true
+//	orm.RegisterDataBase("default", "postgres", "postgres://noro:54985498@muyang.work/noro?sslmode=disable")
+//	orm.RegisterModel(new(User))
+//	orm.RunSyncdb("default", false, true)
+//}
 
 var roomId int32 = 0
 
