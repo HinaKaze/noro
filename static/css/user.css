@@ -15,7 +15,7 @@ body {
 }
 
 .main-title-logo{
-	background-image:url(../img/logo.jpg);
+	background-image:url(../img/logo.png);
 	background-size: 200px 200px;
 	margin-left: auto;
 	margin-right: auto;
@@ -24,13 +24,13 @@ body {
 	vertical-align: center;
 }
 
-#right_content{
+/*#left_content{
 	background-image: url(../img/imoto.jpg);
 	background-size: 400px 800px;
-	float: right;
+	float: left;
 	width: 400px;
 	height: 800px;
-}
+}*/
 
 /*.main-title h1{
 	font-size: 60px;
@@ -109,7 +109,7 @@ body {
     font-weight: normal;
 }
 
-#messages{
+.chat-room > #messages{
 	margin: 5px 0 50px 0;
 }
 
@@ -184,15 +184,24 @@ body {
 }
 
 
-.input-controller{
+/*.input-controller{
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	width: 100%;
 	
+}*/
+
+#footer{
+	position: fixed;
+	bottom: 0px;
+	width: 100%;
+}
+.dashboard{
+	float: left;
 }
 
-.input-avatar{
+.dashboard > .avatar{
 	display: inline-block;
 	width: 10%;
 	height: 10%;
@@ -200,21 +209,34 @@ body {
 	min-height: 75px;
 	border: 5px solid #fff;
 	overflow: hidden;
+	background-color: #eee;
 }
 
 @media (min-width: 800px)
-.input-avatar {
+.dashborad > .avatar{
     display: none;
 }
 
-.input-box{
+.dashboard > .function{
 	display: inline-block;
-	position: relative;
 	padding: 5px 10px;
 	background-color: #333;
-	bottom: 0px;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	width: 70%;
+	position: absolute;
+	bottom: 0px;
+}
+
+.dashboard .function .user-attr{
+	color : #fff;
+	font-size: 18px;
+	line-height: 110%;
+	word-wrap:break-word; 
+	word-break:break-word;
+}
+
+.dashboard .function .input-box{
+	/*display: block;*/
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	border: 1px solid #fff;
 	vertical-align: bottom;
 	margin-left: auto;
@@ -233,20 +255,29 @@ body {
 	width: 15%
 }
 
-.input-menu{
+.dashboard > .friends{
+	background-color: #333;
 	display: inline-block;
 	width: 15%;
 	padding: 0 10px;
 	vertical-align: bottom;
 }
 
+
 .chat-room{
 }
 
-#right_content{
-
-}
 
 .room-config{
 	display: none;
+}
+
+
+.user-room > #messages{
+	display: block;
+	width: 800px;
+	margin-top: 5px;
+	margin-bottom: 50px;
+	background-color: #333;
+	border-radius: 5px;
 }

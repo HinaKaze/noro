@@ -6,6 +6,7 @@ var ghost = {
             '1': "face1.gif",
             '2': "face2.gif",
             '3': "face3.gif",
+            '4': "face4.png",
         },
         menu: [
             //['shownotice', '显示公告'],
@@ -40,7 +41,8 @@ var ghost = {
      * 变身
      */
     transform: function() {
-        this.shell.setFace(4)
+        this.shell.setFace(4);
+        this.shell.stopTalkSelf();
     },
 
     /**

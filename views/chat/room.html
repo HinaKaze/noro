@@ -24,7 +24,7 @@ $(document).ready(function() {
         // noro.roomWS.onclose = function(event) {
         //     console.log("ws cloesed!")
         //     $.get("/chat/room?id=" + chatRoomDetail.Id, function(data, status) {
-        //         $("#main_content").html(data);
+        //         $("#content").html(data);
         //     });
         // };
         noro.lastRoomId = chatRoomDetail.Id;
@@ -32,7 +32,7 @@ $(document).ready(function() {
 
     $("#main_back").click(function() {
         $.get("/chat/lobby", function(data, status) {
-            $("#main_content").html(data);
+            $("#content").html(data);
         });
     });
     function addMessage(type, user, text, time) {
@@ -121,44 +121,29 @@ $(document).ready(function() {
     }
     showHistoryMsgs();
     showRoomMates();
-    $("#chat_send").click(function() {
-        var message = $("#chat_text").val()
+    $("#input_send").click(function() {
+        var message = $("#input_text").val()
         if (message == "") {
             return
         }
         noro.roomWS.send(message)
-        $("#chat_text").val("")
+        $("#input_text").val("")
     });
-    $("#chat_text").keydown(function(e) {
+    $("#input_text").keydown(function(e) {
         console.log(e.keyCode);
         //enter trigger
         if (e.keyCode == 13){
-             var message = $("#chat_text").val()
+             var message = $("#input_text").val()
             if (message == "") {
                 return
             }
             noro.roomWS.send(message)
-            $("#chat_text").val("")
+            $("#input_text").val("")
         }
     });
 })
 </script>
 <div class="chat-room">
     <div id="messages">
-    </div>
-    <div class="input-controller">
-        <img class="input-avatar" src="static/img/user/avatar{{.RoomDetail.Myself.Id}}.jpg"></img>
-        <div class="input-box">
-            <input type="text" id="chat_text" placeholder="说点什么吧..." ></input>
-            <button type="button" id="chat_send" class="btn btn-warning">发送</button>
-        </div>
-        <div class="input-menu">
-            <span class="glyphicon glyphicon-search" style="color:#fff"></span>
-            <span class="glyphicon glyphicon-user" style="color:#fff"></span>
-            <span class="glyphicon glyphicon-camera" style="color:#fff"></span>
-            <span class="glyphicon glyphicon-map-marker" style="color:#fff"></span>
-            <span class="glyphicon glyphicon-shopping-cart" style="color:#fff"></span>
-            <span class="glyphicon glyphicon-fullscreen" style="color:#fff"></span>
-        </div>
     </div>
 </div>

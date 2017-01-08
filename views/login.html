@@ -3,13 +3,13 @@ $(document).ready(function() {
     $("#register_btn").click(function() {
         $.get("/register", function(data, status) {
             console.log(status)
-            $("#main_content").html(data);
+            $("#content").html(data);
         });
     });
     $("#login_form").submit(function(event) {
         event.preventDefault();
         $.post("/login",$(this).serialize(), function(data, status) {
-            $("#main_content").html(data);
+            $("#content").html(data);
         });
     });
 });

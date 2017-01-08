@@ -64,11 +64,7 @@ func (c *ChatRoomController) Post() {
 	c.ServeJSON()
 }
 
-type WebSocketController struct {
-	beego.Controller
-}
-
-func (w *WebSocketController) Join() {
+func (w *ChatRoomController) WS() {
 	defer func() {
 		if x := recover(); x != nil {
 			beego.BeeLogger.Warning("WebSocket disconnected [%+v],%s", x, debug.Stack())

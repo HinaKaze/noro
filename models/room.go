@@ -111,6 +111,7 @@ func (c *ChatRoomDetail) BroadcastMessage(m ChatMessage) {
 		c.HistoryMsgs[i].Id = index
 		index++
 	}
+
 	tm := m.ToT()
 	for _, mate := range c.Mates {
 		mate.ws.WriteJSON(tm)
@@ -128,12 +129,12 @@ func (c *ChatRoomDetail) ToT(myself User) (t TChatRoomDetail) {
 	t.TChatRoom = c.ChatRoom.ToT()
 	t.Mates = make([]TUser, 0)
 	for _, u := range c.Mates {
-		t.Mates = append(t.Mates, u.ToT())
+		t.Mates = append(t.Mates, u.ToT(false))
 	}
 	t.HistoryMsgs = make([]TChatMessage, 0)
 	for _, c := range c.HistoryMsgs {
 		t.HistoryMsgs = append(t.HistoryMsgs, c.ToT())
 	}
-	t.Myself = myself.ToT()
+	t.Myself = myself.ToT(false)
 	return
 }

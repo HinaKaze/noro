@@ -187,7 +187,7 @@ var Ukagaka = {
     loadGhostFaces: function(faces) {
         var html = '<div class="ukagaka_faces">';
         for (var i in faces) {
-            html += '<img class="face' + i + '" src="' + this.data.shell_path + faces[i] + '" />';
+            html += '<img class="face' + i + '" src="' + this.data.shell_path + faces[i] + '" style="width:200px;height:200px;"/>';
             this.shell.data.face_length++
         }
         html += '</div>';

@@ -1,0 +1,338 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    /*
+
+    Virtual Room
+
+    */
+    var game = new Phaser.Game(800, 600, Phaser.AUTO, "virtual_room", {
+        preload: preload,
+        create: create,
+        update: update,
+    });
+    var assetePath = "static/img/game/";
+    //var player;
+    var cursors;
+    var platfroms;
+    var stars;
+    var score = 0;
+    var scoreText;
+    var players = {};
+    var lastState = "stop";
+    /*
+
+    */
+    if (noro.userRoomWS == undefined) {
+        noro.userRoomWS = new WebSocket('ws://' + window.location.host + '/user/ws');
+        noro.userRoomWS.onmessage = function(event) {
+            var data = JSON.parse(event.data)
+            switch (data.Type) {
+                //join room
+                case 1:
+                    newPlayer(data.User);
+                    break;
+                    //left room
+                case 2:
+                    removePlayer(data.User);
+                    break;
+                    //new message
+                case 3:
+                    showNewMsg(data.User, data.Text, data.Time)
+                    break;
+                    //op right
+                case 4:
+                    changePlayerState(data.User, "left");
+                    break;
+                    //op left:
+                case 5:
+                    changePlayerState(data.User, "right");
+                    break;
+                    //op up:
+                case 6:
+                    changePlayerState(data.User, "up");
+                    break;
+                    //op stop
+                case 7:
+                    changePlayerState(data.User, "stop");
+                    break;
+
+            }
+
+        };
+    }
+        noro.userRoomWS.onclose = function(event) {
+            console.log("ws cloesed!")
+            $.get("/user/room?id=" + {{.Room.Owner.Id}}, function(data, status) {
+                $("#content").html(data);
+            });
+        };
+    var myself = {{.Myself}};
+    var room = {{.Room}}
+
+    function sendWSData(type, text) {
+        noro.userRoomWS.send(JSON.stringify({
+            Type: type,
+            Text: text
+        }));
+    }
+
+    function newPlayer(user) {
+        console.log("new player");
+        var player = game.add.sprite(32, 450, "dude");
+        game.physics.arcade.enable(player);
+        player.body.bounce.y = 0.2;
+        player.body.gravity.y = 300;
+        player.body.colliderWorldBounds = true;
+        player.animations.add("left", [0, 1, 2, 3], 10, true);
+        player.animations.add("right", [5, 6, 7, 8], 10, true);
+        player.noro = {
+            "state": "stop",
+            "msg": "",
+            "username": user.Name
+        };
+        players[user.Id] = player;
+        var playerName = game.make.text(-16, -16, user.Name, {
+            fontSize: "16px",
+            fill: "#000"
+        });
+        player.addChild(playerName);
+        var playerMsg = game.make.text(-16, -32, "", {
+            fontSize: "16px",
+            fill: "#f00"
+        });
+        player.noro.msgChild = player.addChild(playerMsg);
+    }
+
+    function removePlayer(user) {
+        console.log(user)
+        var p = players[user.Id]
+        console.log(p)
+        if (p != undefined) {
+            players[user.Id].kill();
+            players[user.Id] = undefined;
+        }
+    }
+
+    function showNewMsg(user, msg, time) {
+
+        var p = players[user.Id]
+        if (p != undefined) {
+            p.noro.msgChild.text = msg;
+            console.log(p.noro)
+        }
+        addMessage(user, msg, time)
+    }
+
+    function changePlayerState(user, state) {
+        var p = players[user.Id]
+        if (p != undefined) {
+            p.noro.state = state;
+        }
+    }
+
+
+
+    function preload() {
+        console.log("preload");
+        game.load.image("sky", assetePath + "sky.png");
+        game.load.image("ground", assetePath + "platform.png");
+        game.load.image("star", assetePath + "star.png");
+        game.load.spritesheet("dude", assetePath + "dude.png", 32, 44);
+    }
+
+    function create() {
+        console.log("create");
+        game.physics.startSystem(Phaser.Physics.ARCADE);
+
+        game.add.sprite(0, 0, "sky");
+
+        platforms = game.add.group();
+        platforms.enableBody = true;
+        var ground = platforms.create(0, game.world.height - 64, "ground");
+        ground.scale.setTo(2, 2);
+        ground.body.immovable = true;
+        var ledge = platforms.create(400, 400, "ground");
+        ledge.body.immovable = true;
+        ledge = platforms.create(-150, 250, "ground");
+        ledge.body.immovable = true;
+
+        // var player = game.add.sprite(32, 450, "dude");
+        // game.physics.arcade.enable(player);
+        // player.body.bounce.y = 0.2;
+        // player.body.gravity.y = 300;
+        // player.body.colliderWorldBounds = true;
+        // player.animations.add("left", [0, 1, 2, 3], 10, true);
+        // player.animations.add("right", [5, 6, 7, 8], 10, true);
+        // player.noro = {
+        //     "state": "stop",
+        //     "msg": "",
+        //     "username": myself.Name
+        // };
+        console.log(room.Mates)
+        for (var mateId in room.Mates) {
+            var mate = room.Mates[mateId]
+            if (mate == undefined) {
+                continue;
+            }
+            if (mate.Id != myself.Id) {
+                newPlayer(mate)
+            }
+        }
+        newPlayer(myself)
+            //players[myself.Id] = player
+
+        cursors = game.input.keyboard.createCursorKeys();
+
+        stars = game.add.group();
+        stars.enableBody = true;
+        for (var i = 0; i < 12; i++) {
+            var star = stars.create(i * 70, 0, "star");
+            star.body.gravity.y = 6;
+            star.body.bounce.y = 0.7 + Math.random() * 0.2;
+        }
+
+
+    }
+
+    function update() {
+        // console.log("update");
+
+
+        myselfPlayer = players[myself.Id]
+
+        if (cursors.left.isDown) {
+            myselfPlayer.noro.state = "left";
+            if (lastState != "left") {
+                sendWSData(4, "");
+            }
+            lastState = "left";
+        } else if (cursors.right.isDown) {
+            myselfPlayer.noro.state = "right";
+            if (lastState != "right") {
+                sendWSData(5, "");
+            }
+            lastState = "right";
+        } else if (cursors.up.isDown) {
+            myselfPlayer.noro.state = "up";
+            if (lastState != "up") {
+                sendWSData(6, "");
+            }
+            lastState = "up";
+        } else {
+
+            myselfPlayer.noro.state = "stop";
+            if (lastState != "stop") {
+                sendWSData(7, "");
+            }
+            lastState = "stop";
+        }
+
+
+        for (var pId in players) {
+            var p = players[pId]
+            if (p == undefined) {
+                continue;
+            }
+            var hitPlateform = game.physics.arcade.collide(p, platforms);
+            for (var pcId in players) {
+                var pc = players[pcId]
+                if (pc == undefined || pcId == pId) {
+                    continue;
+                }
+                game.physics.arcade.collide(pc, p);
+            }
+            game.physics.arcade.collide(stars, platforms);
+            game.physics.arcade.overlap(p, stars, collectStar, null, this);
+            p.body.velocity.x = 0;
+
+            switch (p.noro.state) {
+                case "right":
+                    console.log(p.noro.state);
+                    p.body.velocity.x += 150;
+                    p.animations.play("right");
+                    break;
+                case "left":
+                    p.body.velocity.x += -150;
+                    p.animations.play("left");
+                    break;
+                case "up":
+                    if (p.body.touching.down && hitPlateform) {
+                        p.body.velocity.y = -350;
+                    }
+                    break;
+                case "stop":
+                    p.body.velocity.x = 0;
+                    p.animations.stop();
+                    p.frame = 4;
+                    break;
+            }
+        }
+    }
+
+    function collectStar(player, star) {
+        star.kill();
+        score += 10;
+        //scoreText.text = "Score:" + score;
+    }
+    $("#input_send").click(function() {
+        console.log("dafdasfs")
+        var message = $("#input_text").val()
+        if (message == "") {
+            return
+        }
+        sendWSData(3, message)
+        showNewMsg(myself, message)
+        $("#input_text").val("")
+    });
+    $("#input_text").keydown(function(e) {
+        console.log(e.keyCode);
+        //enter trigger
+        if (e.keyCode == 13) {
+            var message = $("#input_text").val()
+            if (message == "") {
+                return
+            }
+            sendWSData(3, message)
+            showNewMsg(myself, message)
+            $("#input_text").val("")
+        }
+    });
+    /*
+    user-chat_room
+    */
+    function showHistoryMsgs() {
+        for (hm of room.HistoryMsgs) {
+            addMessage(hm.User, hm.Text, hm.Time);
+        }
+    }
+
+    function addMessage(user, text, time) {
+        addText(user, text, time)
+    }
+
+function addText(user, text, time) {
+    var http = '\
+        <div class="message">\
+            <div class="message-user">\
+                <img class="message-user-avatar" src="static/img/user/avatar' + user.Id + '.jpg"></img>\
+                <div class="message-user-name">' + user.Name + '</div>\
+            </div>\
+            <div class="message-content">\
+                <div class="message-content-text text">' + text + '</div>\
+                <div class="message-content-time">' + time + '</div>\
+            </div>\
+        </div>\
+        '
+    $("#messages").append(http)
+}
+
+showHistoryMsgs();
+});
+</script>
+<!-- <div id="house_content" style="width:1000px,height:500px;background-color:#fff">
+</div> -->
+<div id="virtual_room"></div>
+<div class="user-room">
+    <div id="messages">
+    </div>
+</div>

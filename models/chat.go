@@ -28,7 +28,7 @@ type TChatRoom struct {
 func (c *ChatRoom) ToT() (t TChatRoom) {
 	t.Id = c.Id
 	t.Topic = c.Topic
-	t.Creator = c.Creator.ToT()
+	t.Creator = c.Creator.ToT(false)
 	t.MaxMember = c.MaxMember
 	t.CreateTime = common.ToFormatTime(c.CreateTime)
 	t.CreateYear = c.CreateTime.Year()
@@ -56,7 +56,7 @@ type TChatMessage struct {
 func (c *ChatMessage) ToT() (t TChatMessage) {
 	t.Id = c.Id
 	t.Type = c.Type
-	t.User = c.User.ToT()
+	t.User = c.User.ToT(false)
 	t.Text = c.Text
 	t.Time = common.ToFormatTime(c.Time)
 	return

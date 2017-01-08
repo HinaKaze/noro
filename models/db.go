@@ -6,7 +6,8 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	//"github.com/astaxie/beego/orm"
+	"github.com/astaxie/beego/orm"
+	"github.com/hinakaze/iniparser"
 	_ "github.com/lib/pq"
 )
 
@@ -20,12 +21,26 @@ func init() {
 	SaveRoom(fakeChatRoom)
 }
 
-//func init() {
-//	orm.Debug = true
-//	orm.RegisterDataBase("default", "postgres", "postgres://noro:54985498@muyang.work/noro?sslmode=disable")
-//	orm.RegisterModel(new(User))
-//	orm.RunSyncdb("default", false, true)
-//}
+func init() {
+	iniparser.DefaultParse("./conf/user.ini")
+	section, ok := iniparser.GetSection("DB")
+	if !ok {
+		panic("ini parse error")
+	}
+	driverName, ok := section.GetValue("driverName")
+	if !ok {
+		panic("[driverName] not found")
+	}
+	dataSource, ok := section.GetValue("dataSource")
+	if !ok {
+		panic("[dataSource] not found")
+	}
+
+	orm.Debug = true
+	orm.RegisterDataBase("default", driverName, dataSource)
+	//orm.RegisterModel(new(User))
+	//orm.RunSyncdb("default", false, true)
+}
 
 var roomId int32 = 0
 
@@ -71,6 +86,37 @@ func GetRoom(rId int) (room *ChatRoom, ok bool) {
 	return
 }
 
+var userRoomId int32 = 0
+
+var userRoomMap map[int]*UserRoomDetail = make(map[int]*UserRoomDetail)
+var userRoomMapMutex *sync.RWMutex = new(sync.RWMutex)
+
+func CreateUserRoomDetail(owner *User) (room *UserRoomDetail) {
+	room = new(UserRoomDetail)
+	room.Id = owner.Id
+	room.Owner = owner
+	room.Mates = make([]*UserDetail, 0)
+	room.HistoryMsgs = make([]ChatMessage, 0)
+	return
+}
+
+func SaveUserRoomDetail(room *UserRoomDetail) {
+	chatRoomMapMutex.Lock()
+	defer chatRoomMapMutex.Unlock()
+	if _, ok := userRoomMap[room.Id]; ok {
+		beego.BeeLogger.Warning("User want to create user room,but id duplicated [%d]", room.Id)
+		return
+	}
+	userRoomMap[room.Id] = room
+	return
+}
+func GetUserRoomDetail(id int) (room *UserRoomDetail, ok bool) {
+	userRoomMapMutex.RLock()
+	defer userRoomMapMutex.RUnlock()
+	room, ok = userRoomMap[id]
+	return
+}
+
 var userMap map[int]*User = make(map[int]*User)
 var userMapByName map[string]*User = make(map[string]*User)
 var userMutex *sync.RWMutex = new(sync.RWMutex)
@@ -81,6 +127,7 @@ func CreateUser(name string, password string) (user User) {
 	user.Name = name
 	user.Password = password
 	user.CanLogin = true
+	user.AddFriend(3)
 	return
 }
 

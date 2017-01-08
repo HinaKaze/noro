@@ -4,7 +4,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/hinakaze/noro/controllers"
 	"github.com/hinakaze/noro/controllers/chat"
-	"github.com/hinakaze/noro/controllers/house"
+	"github.com/hinakaze/noro/controllers/user"
 	"github.com/hinakaze/noro/filter"
 )
 
@@ -17,8 +17,10 @@ func init() {
 	beego.InsertFilter("/chat/*", beego.BeforeRouter, filter.FilterLogin)
 	beego.Router("/chat/lobby", &chat.ChatLobbyController{})
 	beego.Router("/chat/room", &chat.ChatRoomController{})
-	beego.Router("/chat/ws", &chat.WebSocketController{}, "get:Join")
+	beego.Router("/chat/ws", &chat.ChatRoomController{}, "get:WS")
 
-	//house
-	beego.Router("/house/game", &house.GameController{})
+	//user
+	beego.Router("/user/dashboard", &user.DashboardController{})
+	beego.Router("/user/room", &user.RoomController{})
+	beego.Router("/user/ws", &user.RoomController{}, "get:WS")
 }
