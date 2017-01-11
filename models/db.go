@@ -21,25 +21,28 @@ func init() {
 	SaveRoom(fakeChatRoom)
 }
 
-func init() {
-	iniparser.DefaultParse("./conf/user.ini")
-	section, ok := iniparser.GetSection("DB")
-	if !ok {
-		panic("ini parse error")
-	}
-	driverName, ok := section.GetValue("driverName")
-	if !ok {
-		panic("[driverName] not found")
-	}
-	dataSource, ok := section.GetValue("dataSource")
-	if !ok {
-		panic("[dataSource] not found")
-	}
+func Init(dbFlag bool) {
 
-	orm.Debug = true
-	orm.RegisterDataBase("default", driverName, dataSource)
-	//orm.RegisterModel(new(User))
-	//orm.RunSyncdb("default", false, true)
+	if dbFlag {
+		iniparser.DefaultParse("./conf/user.ini")
+		section, ok := iniparser.GetSection("DB")
+		if !ok {
+			panic("ini parse error")
+		}
+		driverName, ok := section.GetValue("driverName")
+		if !ok {
+			panic("[driverName] not found")
+		}
+		dataSource, ok := section.GetValue("dataSource")
+		if !ok {
+			panic("[dataSource] not found")
+		}
+
+		orm.Debug = true
+		orm.RegisterDataBase("default", driverName, dataSource)
+		//orm.RegisterModel(new(User))
+		//orm.RunSyncdb("default", false, true)
+	}
 }
 
 var roomId int32 = 0
