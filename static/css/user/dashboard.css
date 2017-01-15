@@ -1,0 +1,133 @@
+.user-dashboard {
+    width: 100%;
+}
+
+.user-dashboard > div {
+    float: left;
+    display: block;
+}
+
+/*
+	show
+*/
+
+.user-dashboard-show {
+    width: 10%;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+}
+
+.user-dashboard-show-avatar {
+    border: 0.3rem solid #fff;
+    overflow: hidden;
+    background-color: #eee;
+    width: 100%;
+    height: 100%;
+}
+
+/*
+	property
+*/
+
+.user-dashboard-property {
+    background-color: #333;
+    width: 30%;
+    height: 6rem;
+    position: fixed;
+    bottom: 0px;
+    left: 10%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 1rem;
+}
+
+.user-dashboard-property-state{
+	width: 30%;
+	float: left;
+	color: #333;
+	background-color: #fff;
+	margin-top: 1rem;
+	height: 3rem;
+	text-align: center;
+	font-size: 2rem;
+	font-weight: 700;
+	padding-top: 0.5rem;
+	border-radius: 0.2rem;
+}
+
+.user-dashboard-property-exp{
+	width: 30%;
+	float: left;
+	color: #333;
+	background-color: #fff;
+	margin-left: 1rem;
+	margin-top: 2rem;
+	height: 2rem;
+	text-align: center;
+	border-radius: 0.2rem;
+}
+
+.user-dashboard-property-logout{
+	width: 20%;
+	float: right;
+	color: #333;
+	height: 4rem;
+	background-color: #fff;
+	text-align: center;
+	font-size: 3rem;
+	border-radius: 0.2rem;
+}
+
+/*
+	jump
+*/
+.user-dashboard-jump {
+    background-color: #333;
+    width: 59%;
+    height: 6rem;
+    position: fixed;
+    bottom: 0px;
+    left: 41%;
+    padding-left: 10rem;
+    padding-top:2rem;
+}
+
+.user-dashboard-jump > div{
+	float: left;
+	width: 25%;
+	color: #fff;
+	font-size: 3.5rem;
+	font-weight: 700;
+}
+
+/*.dashboard .function .input-box {
+    display: block;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    border: 1px solid #fff;
+    vertical-align: bottom;
+    margin-left: auto;
+    margin-right: auto;
+}*/
+
+
+/*.input-box > input{
+	width: 80%;
+	border-radius: 5px;
+}
+
+.input-box > button{
+	position: absolute;
+	right: 10px;
+	padding: 3px 10px;
+	width: 15%
+}*/
+
+
+/*.dashboard > .friends{
+	background-color: #333;
+	display: inline-block;
+	width: 15%;
+	padding: 0 10px;
+	vertical-align: bottom;
+}*/

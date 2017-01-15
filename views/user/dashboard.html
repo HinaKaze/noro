@@ -1,37 +1,47 @@
 <script type="text/javascript">
 $(document).ready(function() {
-    $("#friend_link").click(function(){
-        var friendId = $(this).attr("friendId");
-        $.get("user/room?id="+friendId,function(data,status){
-            $("#content").html(data);
-        });
-    });
-    $(".avatar").click(function(){
-        $.get("user/room?id={{.User.Id}}",function(data,status){
-            $("#content").html(data);
-        });
-    });
+    // $("#friend_link").click(function() {
+    //     var friendId = $(this).attr("friendId");
+    //     $.get("user/room?id=" + friendId, function(data, status) {
+    //         $("#content").html(data);
+    //     });
+    // });
+    // $(".avatar").click(function() {
+    //     $.get("user/room?id={{.User.Id}}", function(data, status) {
+    //         $("#content").html(data);
+    //     });
+    // });
 });
 </script>
-<div class="dashboard">
-    <img class="avatar" src="static/img/user/avatar{{.User.Id}}.jpg"></img>
-    <div class="function">
-        <div class="input-box">
-            <input type="text" id="input_text" placeholder="说点什么吧..."></input>
-            <button type="button" id="input_send" class="btn btn-warning">发送</button>
-        </div>
+<div class="user-dashboard">
+    <div class="user-dashboard-show">
+        <img class="user-dashboard-show-avatar" src="static/img/user/avatar{{.User.Id}}.jpg"></img>
     </div>
-    <div class="friends">
-        <div class="btn-group dropup">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                好友列表
-                <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-                {{range .User.Friends}}
-                <li friendId="{{.Friend.Id}}" id="friend_link" style="cursor: pointer;">{{.Friend.Name}}</li>
-                {{end}}
-            </ul>
-        </div>
+    <div class="user-dashboard-property">
+        <div class="user-dashboard-property-state">打盹中</div>
+        <div class="user-dashboard-property-exp">0/100</div>
+        <div class="user-dashboard-property-logout">登出</div>
     </div>
+    <div class="user-dashboard-jump">
+        <div class="user-dashborad-jump-chat">聊天</div>
+        <div class="user-dashboard-jump-group">社团</div>
+        <div class="user-dashboard-jump-friend">好友
+            <!-- <div class="btn-group dropup">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    好友
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    {{range .User.Friends}}
+                    <li friendId="{{.Friend.Id}}" id="friend_link" style="cursor: pointer;">{{.Friend.Name}}</li>
+                    {{end}}
+                </ul>
+            </div> -->
+        </div>
+        <div class="user-dashboard-jump-home">个人</div>
+    </div>
+    <!-- <div class="input-box">
+        <input type="text" id="input_text" placeholder="说点什么吧..."></input>
+        <button type="button" id="input_send" class="btn btn-warning">发送</button>
+    </div> -->
 </div>

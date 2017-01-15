@@ -1,0 +1,8 @@
+.user-room > #messages{
+	display: block;
+	width: 800px;
+	margin-top: 5px;
+	margin-bottom: 50px;
+	background-color: #333;
+	border-radius: 5px;
+}

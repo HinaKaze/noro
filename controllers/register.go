@@ -22,7 +22,7 @@ func (c *RegisterController) Post() {
 	if _, ok := models.GetUserByName(username); ok {
 		c.Redirect("/login", 302)
 	} else {
-		newUser := models.CreateUser(username, password)
+		newUser := models.CreateUser(username, password, 0)
 		models.SaveUser(newUser)
 		c.Redirect("/login", 302)
 	}

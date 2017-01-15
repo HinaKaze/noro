@@ -3,6 +3,7 @@ package models
 import (
 	"crypto/md5"
 	"fmt"
+	"log"
 	"sync"
 	"time"
 
@@ -17,6 +18,7 @@ type User struct {
 	MP            int
 	San           int
 	NPoint        int
+	Gender        int // 1 male 0 female
 	Password      string
 	CanLogin      bool
 	LoginSequence string //登陆序列，仅当用户口令修改后更新
@@ -62,12 +64,14 @@ func (u *User) GenerateNewLoginToken() {
 func (u *User) ToT(friendFlag bool) (t TUser) {
 	t.Id = u.Id
 	t.Name = u.Name
+	t.Gender = u.Gender
 	if friendFlag {
 		t.Friends = make([]TFriendship, 0)
 		for _, f := range u.Friends {
 			t.Friends = append(t.Friends, f.ToT())
 		}
 	}
+	log.Println(t)
 	return
 }
 
@@ -79,6 +83,7 @@ type UserDetail struct {
 type TUser struct {
 	Id      int
 	Name    string
+	Gender  int
 	Friends []TFriendship
 }
 

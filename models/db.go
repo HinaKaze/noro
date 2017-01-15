@@ -12,11 +12,13 @@ import (
 )
 
 func init() {
-	fakeUser0 := CreateUser("God", "")
-	fakeUser1 := CreateUser("HinaKaze", "HinaKaze")
-	fakeUser2 := CreateUser("Smilok", "Smilok")
+	fakeUser0 := CreateUser("God", "", 2)
+	fakeUser1 := CreateUser("HinaKaze", "HinaKaze", 1)
+	fakeUser2 := CreateUser("Smilok", "Smilok", 1)
+	fakeUser3 := CreateUser("UnderTaker", "UnderTaker", 0)
 	SaveUser(fakeUser1)
 	SaveUser(fakeUser2)
+	SaveUser(fakeUser3)
 	fakeChatRoom := CreateRoom("Noro", fakeUser0, 0)
 	SaveRoom(fakeChatRoom)
 }
@@ -125,12 +127,13 @@ var userMapByName map[string]*User = make(map[string]*User)
 var userMutex *sync.RWMutex = new(sync.RWMutex)
 var userId int32
 
-func CreateUser(name string, password string) (user User) {
+func CreateUser(name string, password string, gender int) (user User) {
 	user.Id = int(atomic.AddInt32(&userId, 1))
 	user.Name = name
 	user.Password = password
 	user.CanLogin = true
 	user.AddFriend(3)
+	user.Gender = gender
 	return
 }
 

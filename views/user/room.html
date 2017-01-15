@@ -5,7 +5,7 @@ $(document).ready(function() {
     Virtual Room
 
     */
-    var game = new Phaser.Game(800, 600, Phaser.AUTO, "virtual_room", {
+    var game = new Phaser.Game(800, 400, Phaser.AUTO, "virtual_room", {
         preload: preload,
         create: create,
         update: update,
@@ -19,142 +19,28 @@ $(document).ready(function() {
     var scoreText;
     var players = {};
     var lastState = "stop";
-    /*
-
-    */
-    if (noro.userRoomWS == undefined) {
-        noro.userRoomWS = new WebSocket('ws://' + window.location.host + '/user/ws');
-        noro.userRoomWS.onmessage = function(event) {
-            var data = JSON.parse(event.data)
-            switch (data.Type) {
-                //join room
-                case 1:
-                    newPlayer(data.User);
-                    break;
-                    //left room
-                case 2:
-                    removePlayer(data.User);
-                    break;
-                    //new message
-                case 3:
-                    showNewMsg(data.User, data.Text, data.Time)
-                    break;
-                    //op right
-                case 4:
-                    changePlayerState(data.User, "left");
-                    break;
-                    //op left:
-                case 5:
-                    changePlayerState(data.User, "right");
-                    break;
-                    //op up:
-                case 6:
-                    changePlayerState(data.User, "up");
-                    break;
-                    //op stop
-                case 7:
-                    changePlayerState(data.User, "stop");
-                    break;
-
-            }
-
-        };
-    }
-        noro.userRoomWS.onclose = function(event) {
-            console.log("ws cloesed!")
-            $.get("/user/room?id=" + {{.Room.Owner.Id}}, function(data, status) {
-                $("#content").html(data);
-            });
-        };
-    var myself = {{.Myself}};
-    var room = {{.Room}}
-
-    function sendWSData(type, text) {
-        noro.userRoomWS.send(JSON.stringify({
-            Type: type,
-            Text: text
-        }));
-    }
-
-    function newPlayer(user) {
-        console.log("new player");
-        var player = game.add.sprite(32, 450, "dude");
-        game.physics.arcade.enable(player);
-        player.body.bounce.y = 0.2;
-        player.body.gravity.y = 300;
-        player.body.colliderWorldBounds = true;
-        player.animations.add("left", [0, 1, 2, 3], 10, true);
-        player.animations.add("right", [5, 6, 7, 8], 10, true);
-        player.noro = {
-            "state": "stop",
-            "msg": "",
-            "username": user.Name
-        };
-        players[user.Id] = player;
-        var playerName = game.make.text(-16, -16, user.Name, {
-            fontSize: "16px",
-            fill: "#000"
-        });
-        player.addChild(playerName);
-        var playerMsg = game.make.text(-16, -32, "", {
-            fontSize: "16px",
-            fill: "#f00"
-        });
-        player.noro.msgChild = player.addChild(playerMsg);
-    }
-
-    function removePlayer(user) {
-        console.log(user)
-        var p = players[user.Id]
-        console.log(p)
-        if (p != undefined) {
-            players[user.Id].kill();
-            players[user.Id] = undefined;
-        }
-    }
-
-    function showNewMsg(user, msg, time) {
-
-        var p = players[user.Id]
-        if (p != undefined) {
-            p.noro.msgChild.text = msg;
-            console.log(p.noro)
-        }
-        addMessage(user, msg, time)
-    }
-
-    function changePlayerState(user, state) {
-        var p = players[user.Id]
-        if (p != undefined) {
-            p.noro.state = state;
-        }
-    }
-
-
 
     function preload() {
-        console.log("preload");
-        game.load.image("sky", assetePath + "sky.png");
+        game.load.image("sky", assetePath + "night-background.jpg");
         game.load.image("ground", assetePath + "platform.png");
         game.load.image("star", assetePath + "star.png");
+        game.load.image("imoto",assetePath + "imoto.png");
+        game.load.image("ani",assetePath + "ani.png");
         game.load.spritesheet("dude", assetePath + "dude.png", 32, 44);
     }
 
     function create() {
-        console.log("create");
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         game.add.sprite(0, 0, "sky");
 
         platforms = game.add.group();
         platforms.enableBody = true;
-        var ground = platforms.create(0, game.world.height - 64, "ground");
+        var ground = platforms.create(0, game.world.height, "ground");
         ground.scale.setTo(2, 2);
         ground.body.immovable = true;
-        var ledge = platforms.create(400, 400, "ground");
-        ledge.body.immovable = true;
-        ledge = platforms.create(-150, 250, "ground");
-        ledge.body.immovable = true;
+
+
 
         // var player = game.add.sprite(32, 450, "dude");
         // game.physics.arcade.enable(player);
@@ -168,7 +54,6 @@ $(document).ready(function() {
         //     "msg": "",
         //     "username": myself.Name
         // };
-        console.log(room.Mates)
         for (var mateId in room.Mates) {
             var mate = room.Mates[mateId]
             if (mate == undefined) {
@@ -268,6 +153,136 @@ $(document).ready(function() {
             }
         }
     }
+    function newPlayer(user) {
+        console.log(players.length);
+
+        var player
+        if (user.Gender == 0){
+            player = game.add.sprite(20,"imoto");
+        }else if(user.Gender == 1){
+            player = game.add.sprite(20,100,"ani");
+        }else{
+            player = game.add.sprite(20,100,"imoto");
+        }
+        
+        game.physics.arcade.enable(player);
+        player.body.gravity.y = 300;
+        player.body.bounce.y = 0.2;
+        player.body.colliderWorldBounds = true;
+
+
+        // var player = game.add.sprite(32, 450, "dude");
+        // game.physics.arcade.enable(player);
+        // player.body.bounce.y = 0.2;
+        // player.body.gravity.y = 300;
+        
+        // player.animations.add("left", [0, 1, 2, 3], 10, true);
+        // player.animations.add("right", [5, 6, 7, 8], 10, true);
+        player.noro = {
+            "state": "stop",
+            "msg": "",
+            "username": user.Name
+        };
+        players[user.Id] = player;
+        var playerName = game.make.text(50, -16, user.Name, {
+            fontSize: "16px",
+            fill: "#eee"
+        });
+        player.addChild(playerName);
+        var playerMsg = game.make.text(30, -32, "", {
+            fontSize: "16px",
+            fill: "#f00"
+        });
+        player.noro.msgChild = player.addChild(playerMsg);
+    }
+
+    function removePlayer(user) {
+        console.log(user)
+        var p = players[user.Id]
+        console.log(p)
+        if (p != undefined) {
+            players[user.Id].kill();
+            players[user.Id] = undefined;
+        }
+    }
+
+    function showNewMsg(user, msg, time) {
+
+        var p = players[user.Id]
+        if (p != undefined) {
+            p.noro.msgChild.text = msg;
+            console.log(p.noro)
+        }
+        addMessage(user, msg, time)
+    }
+    /*
+
+    */
+    if (noro.userRoomWS == undefined) {
+        noro.userRoomWS = new WebSocket('ws://' + window.location.host + '/user/ws');
+        noro.userRoomWS.onmessage = function(event) {
+            var data = JSON.parse(event.data)
+            switch (data.Type) {
+                //join room
+                case 1:
+                    newPlayer(data.User);
+                    break;
+                    //left room
+                case 2:
+                    removePlayer(data.User);
+                    break;
+                    //new message
+                case 3:
+                    showNewMsg(data.User, data.Text, data.Time)
+                    break;
+                    //op right
+                case 4:
+                    changePlayerState(data.User, "left");
+                    break;
+                    //op left:
+                case 5:
+                    changePlayerState(data.User, "right");
+                    break;
+                    //op up:
+                case 6:
+                    changePlayerState(data.User, "up");
+                    break;
+                    //op stop
+                case 7:
+                    changePlayerState(data.User, "stop");
+                    break;
+
+            }
+
+        };
+    }
+        noro.userRoomWS.onclose = function(event) {
+            console.log("ws cloesed!")
+            $.get("/user/room?id=" + {{.Room.Owner.Id}}, function(data, status) {
+                $("#content").html(data);
+            });
+        };
+    var myself = {{.Myself}};
+    var room = {{.Room}}
+
+    function sendWSData(type, text) {
+        noro.userRoomWS.send(JSON.stringify({
+            Type: type,
+            Text: text
+        }));
+    }
+    
+
+    function changePlayerState(user, state) {
+        var p = players[user.Id]
+        if (p != undefined) {
+            p.noro.state = state;
+        }
+    }
+
+
+
+    
 
     function collectStar(player, star) {
         star.kill();
