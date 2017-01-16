@@ -39,8 +39,9 @@ $(document).ready(function() {
     /*
         chat-room-init
     */
-    (function showDashboardInput() {
+    (function init() {
         $("#user-dashboard-function-input").fadeIn(500);
+        noro.changeMainBackground("/static/img/chat-room-background.png");
     })();
     (function showHistoryMsgs() {
         for (hm of chatRoom.HistoryMsgs) {

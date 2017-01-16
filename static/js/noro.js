@@ -14,6 +14,16 @@ class Noro {
     	};
         $("#user-dashboard-function-input-text").val("");
         $("#main-content-left").html("");
+        this.clearMainBackground();
+    }
+    changeMainBackground(imgurl){
+        $("#main-content").css("background-image","imgurl");
+        $("#main-content").css("background-position","center");
+        $("#main-content").css("background-repeat","repeat-y");
+    }
+    clearMainBackground(){
+        $("#main-content").css("background-image","none");
+        $("#main-content").css("background-position","none");
     }
 }
 
