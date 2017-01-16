@@ -11,24 +11,23 @@ $(document).ready(function() {
         "MsgIndex" : 0,
         "Myself":{{.RoomDetail.Myself}},
     };
-    
     /*
         chat-room-ws
     */
     if (noro.chatRoomWS == undefined || noro.chatRoomId != chatRoom.Id) {
-        if (noro.chatRoomWS != undefined){
+        if (noro.chatRoomWS != undefined) {
             noro.chatRoomWS.close();
         }
         noro.chatRoomWS = new WebSocket('ws://' + window.location.host + '/chat/ws');
         noro.chatRoomId = chatRoom.Id;
         noro.chatRoomWS.chatRoomId = chatRoom.Id;
         noro.chatRoomWS.onmessage = function(event) {
-            var data = JSON.parse(event.data)
-            showNewMsg(data)
+            var data = JSON.parse(event.data);
+            showNewMsg(data);
         };
         noro.chatRoomWS.onclose = function(event) {
             console.log("Chat room ws cloesed!")
-            if (this.chatRoomId == noro.chatRoomId){
+            if (this.chatRoomId == noro.chatRoomId) {
                 console.log("Chat room ws reconnecting...")
                 $.get("/chat/room?id=" + chatRoom.Id, function(data, status) {
                     $("#main-content-center").html(data);
@@ -37,11 +36,10 @@ $(document).ready(function() {
             }
         };
     }
-
     /*
         chat-room-init
     */
-    (function showDashboardInput(){
+    (function showDashboardInput() {
         $("#user-dashboard-function-input").fadeIn(500);
     })();
     (function showHistoryMsgs() {
@@ -49,14 +47,15 @@ $(document).ready(function() {
             addMessage(hm.Type, hm.User, hm.Text, hm.Time);
         }
     })();
+
     function showRoomMates() {
         $("#main-content-left").html('');
         for (u of chatRoom.Mates) {
             if (u != undefined) {
                 var http = '\
-                <div><span class="glyphicon glyphicon-user"></span>\
-                <span class="chat-room-mate">' + u.Name + '</span></div>\
-            ';
+                    <div><span class="glyphicon glyphicon-user"></span>\
+                    <span class="chat-room-mate">' + u.Name + '</span></div>\
+                ';
                 $("#main-content-left").append(http);
             }
         }
@@ -69,6 +68,7 @@ $(document).ready(function() {
         addMessage(data.Type, data.User, data.Text, data.Time)
         scrollLastMessage(chatRoom.MsgIndex)
     }
+
     function addMessage(type, user, text, time) {
         chatRoom.MsgIndex += 1;
         switch (type) {
@@ -83,11 +83,12 @@ $(document).ready(function() {
                 break;
         }
     }
+
     function addText(user, text, time) {
         var http = '\
         <div class="chat-room-message" id="chat-room-message' + chatRoom.MsgIndex + '">\
             <div class="chat-room-message-user">\
-                <img class="chat-room-message-user-avatar" src="static/img/user/avatar'+user.Id+'.jpg"></img>\
+                <img class="chat-room-message-user-avatar" src="static/img/user/avatar' + user.Id + '.jpg"></img>\
                 <div class="chat-room-message-user-name">' + user.Name + '</div>\
             </div>\
             <div class="chat-room-message-content">\
@@ -98,12 +99,14 @@ $(document).ready(function() {
         '
         $("#chat-room-messages").append(http)
     }
+
     function addJoin(user) {
         var http = '<div class="chat-room-tip" id="chat-room-message' + chatRoom.MsgIndex + '">' + user.Name + ' 加入 房间</div>'
         $("#chat-room-messages").append(http)
         chatRoom.Mates.push(user);
         showRoomMates()
     }
+
     function addLeave(user) {
         var http = '<div class="chat-room-tip" id="chat-room-message' + chatRoom.MsgIndex + '">' + user.Name + ' 离开 房间</div>'
         $("#chat-room-messages").append(http)
@@ -115,6 +118,7 @@ $(document).ready(function() {
         }
         showRoomMates()
     }
+
     function scrollLastMessage(index) {
         if (chatRoom.MsgIndex <= 0) {
             return
@@ -131,25 +135,25 @@ $(document).ready(function() {
         if (message == "") {
             return
         }
-        noro.chatRoomWS.send(message)
-        $("#user-dashboard-function-input-text").val("")
+        noro.chatRoomWS.send(message);
+        $("#user-dashboard-function-input-text").val("");
     });
     $("#user-dashboard-function-input-text").keydown(function(e) {
-        if (e.keyCode == 13){
-             var message = $("#user-dashboard-function-input-text").val()
+        if (e.keyCode == 13) {
+            var message = $("#user-dashboard-function-input-text").val();
             if (message == "") {
                 return
             }
-            noro.chatRoomWS.send(message)
-            $("#iuser-dashboard-function-input-text").val("")
+            noro.chatRoomWS.send(message);
+            $("#user-dashboard-function-input-text").val("");
         }
     });
-    $("#user-dashboard-property-logout").click(function(event){
-        if (noro.chatRoomWS != undefined){
+    $("#user-dashboard-property-logout").click(function(event) {
+        if (noro.chatRoomWS != undefined) {
             noro.chatRoomId = -1;
             noro.chatRoomWS.close();
         }
-       $("#user-dashboard-function-input").fadeOut(500);
+        noro.sweepChatRoom();
         $(this).unbind(event);
         $.get("/chat/lobby", function(data, status) {
             $("#main-content-center").html(data);

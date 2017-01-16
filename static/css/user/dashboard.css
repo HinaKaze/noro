@@ -136,6 +136,14 @@
 	color: #fff;
 	font-size: 3.5rem;
 	font-weight: 700;
+	text-align: center;
+}
+
+.user-dashboard-function-jump > div:hover{
+	cursor: pointer;
+	background-color: #eee;
+	color:#333;
+	border-radius: 0.2rem;
 }
 
 /*.dashboard > .friends{

@@ -11,6 +11,13 @@ $(document).ready(function() {
     //         $("#content").html(data);
     //     });
     // });
+    $("#user-dashborad-function-jump-chat").click(function() {
+        console.log("dafdsaf")
+        noro.sweepChatRoom();
+        $.get("/chat/lobby", function(data, status) {
+            $("#main-content-center").html(data);
+        });
+    });
 });
 </script>
 <div class="user-dashboard">
@@ -18,7 +25,7 @@ $(document).ready(function() {
         <img class="user-dashboard-show-avatar" src="static/img/user/avatar{{.User.Id}}.jpg"></img>
     </div>
     <div class="user-dashboard-property">
-        <div class="user-dashboard-property-state">打盹中</div>
+        <div class="user-dashboard-property-state">打脸中</div>
         <div class="user-dashboard-property-exp">0/100</div>
         <div class="user-dashboard-property-logout" id="user-dashboard-property-logout">登出</div>
     </div>
@@ -28,20 +35,19 @@ $(document).ready(function() {
             <button type="button" id="user-dashboard-function-input-send" class="user-dashboard-function-input-send">发送</button>
         </div>
         <div class="user-dashboard-function-jump">
-            <div class="user-dashborad-function-jump-chat">聊天</div>
+            <div class="user-dashborad-function-jump-chat" id="user-dashborad-function-jump-chat">聊天</div>
             <div class="user-dashboard-function-jump-group">社团</div>
             <div class="user-dashboard-function-jump-friend">好友
                 <!-- <div class="btn-group dropup">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                    好友
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    {{range .User.Friends}}
-                    <li friendId="{{.Friend.Id}}" id="friend_link" style="cursor: pointer;">{{.Friend.Name}}</li>
-                    {{end}}
-                </ul>
-            </div> -->
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        {{range .User.Friends}}
+                        <li friendId="{{.Friend.Id}}" id="friend_link" style="cursor: pointer;">{{.Friend.Name}}</li>
+                        {{end}}
+                    </ul>
+                </div> -->
             </div>
             <div class="user-dashboard-function-jump-home">个人</div>
         </div>
