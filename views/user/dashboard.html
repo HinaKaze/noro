@@ -20,13 +20,18 @@ $(document).ready(function() {
     <div class="user-dashboard-property">
         <div class="user-dashboard-property-state">打盹中</div>
         <div class="user-dashboard-property-exp">0/100</div>
-        <div class="user-dashboard-property-logout">登出</div>
+        <div class="user-dashboard-property-logout" id="user-dashboard-property-logout">登出</div>
     </div>
-    <div class="user-dashboard-jump">
-        <div class="user-dashborad-jump-chat">聊天</div>
-        <div class="user-dashboard-jump-group">社团</div>
-        <div class="user-dashboard-jump-friend">好友
-            <!-- <div class="btn-group dropup">
+    <div class="user-dashboard-function">
+        <div class="user-dashboard-function-input" id="user-dashboard-function-input">
+            <input type="text" id="user-dashboard-function-input-text" class="user-dashboard-function-input-text" placeholder="说点什么吧..."></input>
+            <button type="button" id="user-dashboard-function-input-send" class="user-dashboard-function-input-send">发送</button>
+        </div>
+        <div class="user-dashboard-function-jump">
+            <div class="user-dashborad-function-jump-chat">聊天</div>
+            <div class="user-dashboard-function-jump-group">社团</div>
+            <div class="user-dashboard-function-jump-friend">好友
+                <!-- <div class="btn-group dropup">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                     好友
                     <span class="caret"></span>
@@ -37,11 +42,8 @@ $(document).ready(function() {
                     {{end}}
                 </ul>
             </div> -->
+            </div>
+            <div class="user-dashboard-function-jump-home">个人</div>
         </div>
-        <div class="user-dashboard-jump-home">个人</div>
     </div>
-    <!-- <div class="input-box">
-        <input type="text" id="input_text" placeholder="说点什么吧..."></input>
-        <button type="button" id="input_send" class="btn btn-warning">发送</button>
-    </div> -->
 </div>

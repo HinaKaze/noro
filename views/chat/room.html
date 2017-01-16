@@ -1,6 +1,6 @@
 <script type="text/javascript">
 $(document).ready(function() {
-    var chatRoomDetail = {
+    var chatRoom = {
         "Id": {{.RoomDetail.Id}},
         "Topic": {{.RoomDetail.Topic}},
         "Creator": {{.RoomDetail.Creator}},
@@ -11,32 +11,66 @@ $(document).ready(function() {
         "MsgIndex" : 0,
         "Myself":{{.RoomDetail.Myself}},
     };
-   
-    if (noro.lastRoomId != chatRoomDetail.Id || noro.roomWS == undefined) {
-        if (noro.roomWS != undefined){
-            noro.roomWS.close();
+    
+    /*
+        chat-room-ws
+    */
+    if (noro.chatRoomWS == undefined || noro.chatRoomId != chatRoom.Id) {
+        if (noro.chatRoomWS != undefined){
+            noro.chatRoomWS.close();
         }
-        noro.roomWS = new WebSocket('ws://' + window.location.host + '/chat/ws');
-        noro.roomWS.onmessage = function(event) {
+        noro.chatRoomWS = new WebSocket('ws://' + window.location.host + '/chat/ws');
+        noro.chatRoomId = chatRoom.Id;
+        noro.chatRoomWS.chatRoomId = chatRoom.Id;
+        noro.chatRoomWS.onmessage = function(event) {
             var data = JSON.parse(event.data)
             showNewMsg(data)
         };
-        // noro.roomWS.onclose = function(event) {
-        //     console.log("ws cloesed!")
-        //     $.get("/chat/room?id=" + chatRoomDetail.Id, function(data, status) {
-        //         $("#content").html(data);
-        //     });
-        // };
-        noro.lastRoomId = chatRoomDetail.Id;
+        noro.chatRoomWS.onclose = function(event) {
+            console.log("Chat room ws cloesed!")
+            if (this.chatRoomId == noro.chatRoomId){
+                console.log("Chat room ws reconnecting...")
+                $.get("/chat/room?id=" + chatRoom.Id, function(data, status) {
+                    $("#main-content-center").html(data);
+                    console.log("Chat room ws reconnected")
+                });
+            }
+        };
     }
 
-    $("#main_back").click(function() {
-        $.get("/chat/lobby", function(data, status) {
-            $("#content").html(data);
-        });
-    });
+    /*
+        chat-room-init
+    */
+    (function showDashboardInput(){
+        $("#user-dashboard-function-input").fadeIn(500);
+    })();
+    (function showHistoryMsgs() {
+        for (hm of chatRoom.HistoryMsgs) {
+            addMessage(hm.Type, hm.User, hm.Text, hm.Time);
+        }
+    })();
+    function showRoomMates() {
+        $("#main-content-left").html('');
+        for (u of chatRoom.Mates) {
+            if (u != undefined) {
+                var http = '\
+                <div><span class="glyphicon glyphicon-user"></span>\
+                <span class="chat-room-mate">' + u.Name + '</span></div>\
+            ';
+                $("#main-content-left").append(http);
+            }
+        }
+    };
+    showRoomMates();
+    /*
+        chat-room-common
+    */
+    function showNewMsg(data) {
+        addMessage(data.Type, data.User, data.Text, data.Time)
+        scrollLastMessage(chatRoom.MsgIndex)
+    }
     function addMessage(type, user, text, time) {
-        chatRoomDetail.MsgIndex += 1;
+        chatRoom.MsgIndex += 1;
         switch (type) {
             case 0: //join
                 addJoin(user)
@@ -49,101 +83,80 @@ $(document).ready(function() {
                 break;
         }
     }
-
     function addText(user, text, time) {
         var http = '\
-        <div class="message" id="message' + chatRoomDetail.MsgIndex + '">\
-            <div class="message-user">\
-                <img class="message-user-avatar" src="static/img/user/avatar'+user.Id+'.jpg"></img>\
-                <div class="message-user-name">' + user.Name + '</div>\
+        <div class="chat-room-message" id="chat-room-message' + chatRoom.MsgIndex + '">\
+            <div class="chat-room-message-user">\
+                <img class="chat-room-message-user-avatar" src="static/img/user/avatar'+user.Id+'.jpg"></img>\
+                <div class="chat-room-message-user-name">' + user.Name + '</div>\
             </div>\
-            <div class="message-content">\
-                <div class="message-content-text text">' + text + '</div>\
-                <div class="message-content-time">' + time + '</div>\
+            <div class="chat-room-message-content">\
+                <div class="chat-room-message-content-text text">' + text + '</div>\
+                <div class="chat-room-message-content-time">' + time + '</div>\
             </div>\
         </div>\
         '
-        $("#messages").append(http)
+        $("#chat-room-messages").append(http)
     }
-
     function addJoin(user) {
-        var http = '<div class="chat-tip" id="message' + chatRoomDetail.MsgIndex + '">' + user.Name + ' 加入 房间</div>'
-        $("#messages").append(http)
-        chatRoomDetail.Mates.push(user);
+        var http = '<div class="chat-room-tip" id="chat-room-message' + chatRoom.MsgIndex + '">' + user.Name + ' 加入 房间</div>'
+        $("#chat-room-messages").append(http)
+        chatRoom.Mates.push(user);
         showRoomMates()
     }
-
     function addLeave(user) {
-        var http = '<div class="chat-tip" id="message' + chatRoomDetail.MsgIndex + '">' + user.Name + ' 离开 房间</div>'
-        $("#messages").append(http)
-        for (i in chatRoomDetail.Mates) {
-            if (chatRoomDetail.Mates[i].Name == user.Name) {
-                chatRoomDetail.Mates.splice(i, 1)
+        var http = '<div class="chat-room-tip" id="chat-room-message' + chatRoom.MsgIndex + '">' + user.Name + ' 离开 房间</div>'
+        $("#chat-room-messages").append(http)
+        for (i in chatRoom.Mates) {
+            if (chatRoom.Mates[i].Name == user.Name) {
+                chatRoom.Mates.splice(i, 1)
                 break;
             }
         }
         showRoomMates()
     }
-
-    function showHistoryMsgs() {
-        for (hm of chatRoomDetail.HistoryMsgs) {
-            addMessage(hm.Type, hm.User, hm.Text, hm.Time);
-        }
-        //scrollLastMessage(chatRoomDetail.MsgIndex)
-    }
-
-    function showNewMsg(data) {
-        addMessage(data.Type, data.User, data.Text, data.Time)
-        scrollLastMessage(chatRoomDetail.MsgIndex)
-    }
-
-
-    function showRoomMates() {
-        $("#left_content").html('');
-        for (u of chatRoomDetail.Mates) {
-            if (u != undefined) {
-                var http = '\
-                <div><span class="glyphicon glyphicon-user"></span>\
-                <span class="chat-room-mate">' + u.Name + '</span></div>\
-            ';
-                $("#left_content").append(http);
-            }
-        }
-    }
-
     function scrollLastMessage(index) {
-        if (chatRoomDetail.MsgIndex <= 0) {
+        if (chatRoom.MsgIndex <= 0) {
             return
         }
         $("html,body").animate({
-            scrollTop: $("#message" + chatRoomDetail.MsgIndex).offset().top
+            scrollTop: $("#chat-room-message" + chatRoom.MsgIndex).offset().top
         }, 500)
     }
-    showHistoryMsgs();
-    showRoomMates();
-    $("#input_send").click(function() {
-        var message = $("#input_text").val()
+    /*
+        chat-room-dashboard-event
+    */
+    $("#user-dashboard-function-input-send").click(function() {
+        var message = $("#user-dashboard-function-input-text").val()
         if (message == "") {
             return
         }
-        noro.roomWS.send(message)
-        $("#input_text").val("")
+        noro.chatRoomWS.send(message)
+        $("#user-dashboard-function-input-text").val("")
     });
-    $("#input_text").keydown(function(e) {
-        console.log(e.keyCode);
-        //enter trigger
+    $("#user-dashboard-function-input-text").keydown(function(e) {
         if (e.keyCode == 13){
-             var message = $("#input_text").val()
+             var message = $("#user-dashboard-function-input-text").val()
             if (message == "") {
                 return
             }
-            noro.roomWS.send(message)
-            $("#input_text").val("")
+            noro.chatRoomWS.send(message)
+            $("#iuser-dashboard-function-input-text").val("")
         }
+    });
+    $("#user-dashboard-property-logout").click(function(event){
+        if (noro.chatRoomWS != undefined){
+            noro.chatRoomId = -1;
+            noro.chatRoomWS.close();
+        }
+       $("#user-dashboard-function-input").fadeOut(500);
+        $(this).unbind(event);
+        $.get("/chat/lobby", function(data, status) {
+            $("#main-content-center").html(data);
+        });
     });
 })
 </script>
 <div class="chat-room">
-    <div id="messages">
-    </div>
+    <div id="chat-room-messages" class="chat-room-messages"></div>
 </div>

@@ -5,13 +5,9 @@ class Noro {
         return d.getFullYear() + "/" + d.getMonth() + "/" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
     }
     constructor(){
-    	this.lastRoomId = -1;
-    	this.roomWS = undefined;
+    	this.chatRoomId = -1;
+    	this.chatRoomWS = undefined;
     }
 }
 
 var noro = new Noro();
-
-$('.removeTextNodes').contents().filter(function() {
-    return this.nodeType === 3;
-}).remove();
