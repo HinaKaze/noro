@@ -16,11 +16,16 @@ func init() {
 	fakeUser1 := CreateUser("HinaKaze", "HinaKaze", 1)
 	fakeUser2 := CreateUser("Smilok", "Smilok", 1)
 	fakeUser3 := CreateUser("UnderTaker", "UnderTaker", 0)
+	fakeUserRobot := CreateUser("Noro", "", 2)
+	fakeUserRobot.Id = 9988
 	SaveUser(fakeUser1)
 	SaveUser(fakeUser2)
 	SaveUser(fakeUser3)
-	fakeChatRoom := CreateRoom("Noro", fakeUser0, 0)
-	SaveRoom(fakeChatRoom)
+	SaveUser(fakeUserRobot)
+	fakeChatRoom1 := CreateRoom("Noro机器人", fakeUser1, 0)
+	fakeChatRoom2 := CreateRoom("Noro作战本部", fakeUser0, 0)
+	SaveRoom(fakeChatRoom1)
+	SaveRoom(fakeChatRoom2)
 }
 
 func Init(dbFlag bool) {

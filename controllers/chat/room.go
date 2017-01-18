@@ -3,7 +3,11 @@ package chat
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"runtime/debug"
+	"strings"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -108,6 +112,45 @@ func (w *ChatRoomController) WS() {
 			panic(err.Error())
 		}
 		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: user, Text: string(bytes), Time: time.Now()})
+		//robot
+		if roomDetail.Id == 1 {
+			answer := GetRobotAnswer(string(bytes))
+			roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: *userRobot, Text: answer, Time: time.Now()})
+		}
 	}
 	w.Ctx.WriteString("Finish")
+}
+
+var msg string = `{"key":"bd2fc9d82bab426681a40e6c1393b53d","info":"%s","loc":"noro","userid":"1"}`
+var userRobot *models.User
+
+func init() {
+	var ok bool
+	userRobot, ok = models.GetUser(9988)
+	if !ok {
+		panic("User robot not found")
+	}
+}
+
+func GetRobotAnswer(ask string) (answer string) {
+	askMsg := fmt.Sprintf(msg, ask)
+	resp, err := http.Post("http://www.tuling123.com/openapi/api", "application/json", strings.NewReader(askMsg))
+	if err != nil {
+		panic(err.Error())
+	}
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err.Error())
+	}
+	var Answer struct {
+		Code int
+		Text string
+	}
+
+	err = json.Unmarshal(respBody, &Answer)
+	if err != nil {
+		log.Println(err)
+		return "我被玩坏了。。。"
+	}
+	return Answer.Text
 }
