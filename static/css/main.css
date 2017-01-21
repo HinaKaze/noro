@@ -1,27 +1,35 @@
 body {
     /*background-color: #f7f7f8;*/
     background-color: #eee;
+    font-family: "Microsoft YaHei" ;
 }
 
-.main-header{
-	background-image:url("/static/img/title-background.jpg");
-	background-position: center;
-	box-shadow : 0 1px 2px rgba(0, 0, 0, 0.3);
-	width: 100%;
-	height:170px;
-	background-repeat: repeat-x;
+.main-header {
+    background-image: url("/static/img/title-background.jpg");
+    background-position: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 170px;
+    background-repeat: repeat-x;
 }
 
-.main-header-logo{
-	background-image:url("/static/img/logo.png");
-	background-size: 150px 150px;
-	margin-left: auto;
-	margin-right: auto;
-	width: 150px;
-	height: 150px;
-	vertical-align: center;
+.main-header-logo {
+    background-image: url("/static/img/logo.png");
+    background-size: 150px 150px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 150px;
+    height: 150px;
+    vertical-align: center;
 }
 
+html {
+    background: url("/static/img/chat-room-background.png") no-repeat center center fixed;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+}
 
 
 /*#left_content{
@@ -31,6 +39,7 @@ body {
 	width: 400px;
 	height: 800px;
 }*/
+
 
 /*.main-title h1{
 	font-size: 60px;
@@ -42,13 +51,7 @@ body {
 	text-shadow:2px 2px 5px #eee;
 }*/
 
+
 /*#main_back:hover{
 	cursor: pointer;
 }*/
-
-#footer{
-	position: fixed;
-	bottom: 0px;
-	width: 100%;
-}
-

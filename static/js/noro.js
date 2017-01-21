@@ -17,13 +17,12 @@ class Noro {
         this.clearMainBackground();
     }
     changeMainBackground(imgurl){
-        $("#main-content").css("background-image","imgurl");
+        $("#main-content").css("background-image",'url("'+imgurl+'")');
         $("#main-content").css("background-position","center");
         $("#main-content").css("background-repeat","repeat-y");
     }
     clearMainBackground(){
         $("#main-content").css("background-image","none");
-        $("#main-content").css("background-position","none");
     }
 }
 
