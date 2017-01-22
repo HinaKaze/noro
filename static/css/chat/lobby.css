@@ -1,6 +1,6 @@
 .chat-lobby-create-btn {
-    margin: 10px 5px 0 0;
-    height: 25px;
+    margin: .1rem .05rem 0 0;
+    height: .25rem;
 }
 
 .chat-lobby-create-btn:hover {
@@ -15,52 +15,64 @@
     text-align: center;
 }
 
+.chat-lobby{
+    width: 100%;
+}
+
 .chat-lobby-room {
+    margin-left: auto;
+    margin-right: auto;
     display: block;
     position: relative;
     background: url("/static/img/chat-room.jpg") no-repeat center center;
-    width: 100%;
-    height: 4rem;
-    margin: 10px 0;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
+    width: 9.3rem;
+    height: .48rem;
+    margin: .1rem 0;
+    box-shadow: 0 .01rem .02rem rgba(0, 0, 0, 0.3);
+    border-radius: .1rem;
+    padding: .06rem .1rem;
+}
+
+@media (max-width: 640px) {
+    .chat-lobby-room{
+        width: 100%;
+        height: 30px;
+    }
 }
 
 .chat-lobby-room > div {
-    font-size: 2rem;
-    margin-top: 0.5rem;
-    margin-bottom: auto;
+    font-size: .24rem;
     float: left;
     display: block;
     color: #fff;
-    vertical-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
 }
 
 .chat-lobby-room-topic {
-    padding-left: 1rem;
-    width: 30%;
+    width: 2.8rem;
     /*font-weight: 500;*/
     color: #fff;
 }
 
 .chat-lobby-room-creator {
-    width: 30%;
+    width: 2.8rem;
 }
 
 .chat-lobby-room-member {
-    width: 20%;
+    width: 1.8rem;
 }
 
 .chat-lobby-room-enter {
     display: block;
     float: right;
-    margin-top: 0.5rem;
-    margin-bottom: auto;
-    margin-right:2%;
-    font-size: 2rem;
-    width: 10%;
+    font-size: .2rem;
+    width: .7rem;
+    margin-left: 1rem;
     color: #333;
     background-color: rgba(255,255,255,0.6);
-    border: 1px solid transparent;
-    border-radius: 4px;
+    border: 0 solid transparent;
+    border-radius: .04rem;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
 }

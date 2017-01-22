@@ -1,7 +1,7 @@
 body {
     /*background-color: #f7f7f8;*/
-    background-color: #eee;
-    font-family: "Microsoft YaHei" ;
+    /*background-color: #eee;*/
+    font-family: "Open Sans","Microsoft YaHei","Hiragino Sans GB","Hiragino Sans GB W3","微软雅黑","Helvetica Neue",Arial,sans-serif ;
 }
 
 .main-header {
@@ -23,7 +23,7 @@ body {
     vertical-align: center;
 }
 
-html {
+body {
     background: url("/static/img/chat-room-background.png") no-repeat center center fixed;
     background-size: cover;
     -webkit-background-size: cover;

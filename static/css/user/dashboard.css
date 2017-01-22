@@ -12,18 +12,19 @@
 */
 
 .user-dashboard-show {
-    width: 10%;
+    width: 1.9rem;
+    height: 1.9rem;
     position: fixed;
-    bottom: 0px;
-    left: 0px;
+    bottom: 0;
+    left: 0;
 }
 
 .user-dashboard-show-avatar {
-    border: 0.3rem solid #fff;
+    border: 0.04rem solid #fff;
     overflow: hidden;
     background-color: #eee;
-    width: 100%;
     height: 100%;
+    width: 100%;
 }
 
 /*
@@ -33,51 +34,53 @@
 .user-dashboard-property {
     /*background-color: #333;*/
     background-color: rgba(0,0,0,.3);
-    width: 30%;
-    height: 6rem;
+    width: 5.8rem;
+    height: .6rem;
     position: fixed;
-    bottom: 0px;
-    left: 10%;
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-top: 1rem;
+    bottom: 0;
+    left: 1.9rem;
+    padding-left: .02rem;
+    padding-right: .02rem;
+    border-radius: .03rem;
 }
 
 .user-dashboard-property-state{
-	width: 30%;
+	width: 1.7rem;
 	float: left;
 	color: #333;
 	background-color: rgba(255,255,255,0.6);
-	margin-top: 1rem;
-	height: 3rem;
+	margin-top: .3rem;
+	height: .3rem;
 	text-align: center;
-	font-size: 2rem;
+	font-size: .02rem;
 	font-weight: 700;
-	padding-top: 0.5rem;
-	border-radius: 0.2rem;
+	padding-top: .06rem;
+	border-radius: .02rem;
 }
 
 .user-dashboard-property-exp{
-	width: 30%;
+	width: 1.7rem;
 	float: left;
 	color: #333;
 	background-color: rgba(255,255,255,0.6);
-	margin-left: 1rem;
-	margin-top: 2rem;
-	height: 2rem;
+	margin-left: .02rem;
+	margin-top: .4rem;
+	height: .2rem;
 	text-align: center;
-	border-radius: 0.2rem;
+	border-radius: .02rem;
 }
 
 .user-dashboard-property-logout{
-	width: 20%;
+	width: .9rem;
 	float: right;
 	color: #333;
-	height: 4rem;
+	height: .4rem;
 	background-color: rgba(255,255,255,0.6);
 	text-align: center;
-	font-size: 3rem;
-	border-radius: 0.2rem;
+	font-size: .3rem;
+	border-radius: .02rem;
+	margin-top: .1rem;
+	margin-right: .05rem;
 }
 .user-dashboard-property-logout:hover{
 	cursor: pointer;
@@ -87,13 +90,13 @@
 	function
 */
 .user-dashboard-function{
-	background-color: rgba(0,0,0,.3);
-    width: 59%;
-    height: 6rem;
+	/*background-color: rgba(0,0,0,.3);*/
+    width: 11.3rem;
+    height: .7rem;
     position: fixed;
-    bottom: 0px;
-    left: 41%;
-    padding-left: 10rem;
+    bottom: 0;
+    left: 7.9rem;
+    padding-left: .1rem;
 }
 
 /*
@@ -101,26 +104,25 @@
 */
 .user-dashboard-function-input{
 	position: relative;
-	width: 100%;
-	height: 1.5rem;
+	top: .05rem;
+	width: 10rem;
+	height: .5rem;
 	margin-left: auto;
 	margin-right: auto;
 	display: none;
-	padding: 0.2rem 0 ;
+	padding: .02rem 0;
+	font-size:.2rem;
 }
 .user-dashboard-function-input-text{
-	width: 80%;
-	border-radius: 0.2rem;
+	width: 8rem;
+	border-radius: .02rem;
 	border: none;
 }
 .user-dashboard-function-input-send{
-	/*position: absolute;*/
 	background-color: #f0ad4e;
 	border: none;
-	border-radius: 0.2rem;
-	/*right: 0.5rem;*/
-	width: 15%
-	font-size:1rem;
+	border-radius: .02rem;
+	width: 1.5rem;
 	color:#fff;
 	text-align: center;
 }
@@ -128,23 +130,28 @@
 	function-jump
 */
 .user-dashboard-function-jump {
-    padding-top:0.5rem;
+    padding-top:.05rem;
 }
 
 .user-dashboard-function-jump > div{
 	float: left;
-	width: 25%;
+	width: 2.5rem;
 	color: #fff;
-	font-size: 3.5rem;
+	font-size: .35rem;
 	font-weight: 700;
 	text-align: center;
+	transition: margin-top .5s;
+	border-top: .15rem solid rgb(100, 100, 100);
+	border-radius: .05rem;
+	margin-left: .15rem;
+	margin-right: .15rem;
+	margin-top: .5rem;
+	background-color: rgba(70, 70, 70,.6);
 }
 
 .user-dashboard-function-jump > div:hover{
 	cursor: pointer;
-	background-color: #eee;
-	color:#333;
-	border-radius: 0.2rem;
+	margin-top: 0;
 }
 
 /*.dashboard > .friends{
