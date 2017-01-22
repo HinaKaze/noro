@@ -8,13 +8,17 @@ class Noro {
         d.setTime(Date.parse(t));
         return d.getFullYear() + "/" + d.getMonth() + "/" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
     }
+    showChatRoom() {
+        $("#user-dashboard-function-input").fadeIn(500);
+        $(".main-header").css("display", "none");
+    }
     sweepChatRoom() {
         if ($("user-dashboard-function-input").attr("display") != "none") {
             $("#user-dashboard-function-input").fadeOut(500);
         };
         $("#user-dashboard-function-input-text").val("");
         $("#main-content-left").html("");
-        this.clearMainBackground();
+        $(".main-header").css("display", "block");
     }
     changeMainBackground(imgurl) {
         $("#main-content").css("background-image", 'url("' + imgurl + '")');
@@ -37,10 +41,10 @@ var noro = new Noro();
             if (!clientWidth) return;
             if (clientWidth >= 1920) {
                 docEl.style.fontSize = '100px';
-                 console.log("1",docEl.style.fontSize)
+                console.log("1", docEl.style.fontSize)
             } else {
                 docEl.style.fontSize = 100 * (clientWidth / 1920) + 'px';
-                console.log("2",docEl.style.fontSize)
+                console.log("2", docEl.style.fontSize)
             }
         };
 
@@ -48,4 +52,3 @@ var noro = new Noro();
     win.addEventListener(resizeEvt, recalc, false);
     doc.addEventListener('DOMContentLoaded', recalc, false);
 })(document, window);
-

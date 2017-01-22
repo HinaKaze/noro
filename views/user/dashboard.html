@@ -12,7 +12,6 @@ $(document).ready(function() {
     //     });
     // });
     $("#user-dashborad-function-jump-chat").click(function() {
-        console.log("dafdsaf")
         noro.sweepChatRoom();
         $.get("/chat/lobby", function(data, status) {
             $("#main-content-center").html(data);
@@ -26,13 +25,14 @@ $(document).ready(function() {
     </div>
     <div class="user-dashboard-property">
         <div class="user-dashboard-property-state">打脸中</div>
-        <div class="user-dashboard-property-exp">0/100</div>
-        <div class="user-dashboard-property-logout" id="user-dashboard-property-logout">登出</div>
+        <!-- <div class="user-dashboard-property-exp">0/100</div> -->
+        <!-- <div class="user-dashboard-property-logout" id="user-dashboard-property-logout">登出</div> -->
     </div>
     <div class="user-dashboard-function">
         <div class="user-dashboard-function-input" id="user-dashboard-function-input">
             <input type="text" id="user-dashboard-function-input-text" class="user-dashboard-function-input-text" placeholder="说点什么吧..."></input>
             <button type="button" id="user-dashboard-function-input-send" class="user-dashboard-function-input-send">发送</button>
+            <button type="button" id="user-dashboard-function-input-send" class="user-dashboard-function-input-plus">+</button>
         </div>
         <div class="user-dashboard-function-jump">
             <div class="user-dashborad-function-jump-chat" id="user-dashborad-function-jump-chat">聊天</div>

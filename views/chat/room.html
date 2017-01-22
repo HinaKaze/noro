@@ -39,10 +39,7 @@ $(document).ready(function() {
     /*
         chat-room-init
     */
-    (function init() {
-        $("#user-dashboard-function-input").fadeIn(500);
-        noro.changeMainBackground("/static/img/chat-room-background.png");
-    })();
+    noro.showChatRoom();
     (function showHistoryMsgs() {
         for (hm of chatRoom.HistoryMsgs) {
             addMessage(hm.Type, hm.User, hm.Text, hm.Time);
@@ -61,7 +58,7 @@ $(document).ready(function() {
             }
         }
     };
-    showRoomMates();
+    //showRoomMates();
     /*
         chat-room-common
     */
@@ -105,7 +102,7 @@ $(document).ready(function() {
         var http = '<div class="chat-room-tip" id="chat-room-message' + chatRoom.MsgIndex + '">' + user.Name + ' 加入 房间</div>'
         $("#chat-room-messages").append(http)
         chatRoom.Mates.push(user);
-        showRoomMates()
+        //showRoomMates()
     }
 
     function addLeave(user) {
@@ -117,7 +114,7 @@ $(document).ready(function() {
                 break;
             }
         }
-        showRoomMates()
+        //showRoomMates()
     }
 
     function scrollLastMessage(index) {
@@ -160,8 +157,21 @@ $(document).ready(function() {
             $("#main-content-center").html(data);
         });
     });
+    $("#chat-room-plus").click(function(event) {
+        $("#chat-room-plus-list").toggle(500);
+    });
 })
 </script>
 <div class="chat-room">
+    <div class="chat-room-header">
+        <div class="chat-room-exit">登出</div>
+        <div class="chat-room-topic">[房间]{{.RoomDetail.Topic}}</div>
+        <div class="chat-room-plus" id="chat-room-plus">+</div>
+        <div class="chat-room-plus-list" id="chat-room-plus-list">
+            <ul>成员列表</ul>
+            <ul>消息记录</ul>
+            <ul>待续</ul>
+        </div>
+    </div>
     <div id="chat-room-messages" class="chat-room-messages"></div>
 </div>
