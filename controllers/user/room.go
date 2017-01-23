@@ -16,12 +16,12 @@ type RoomController struct {
 }
 
 func (c *RoomController) Get() {
-	userId, err := c.GetInt("id")
+	userId, err := c.GetInt64("id")
 	if err != nil {
 		panic(err.Error())
 	}
-	user, ok := models.GetUser(userId)
-	if !ok {
+	user := models.GetUser(userId)
+	if user == nil {
 		panic(fmt.Sprintf("Try to enter a invalid user room [%d]", userId))
 	}
 	userRoom, ok := models.GetUserRoomDetail(userId)
@@ -49,7 +49,7 @@ func (w *RoomController) WS() {
 		}
 	}()
 
-	userRoomId, ok := w.GetSession("userRoomId").(int)
+	userRoomId, ok := w.GetSession("userRoomId").(int64)
 	if !ok {
 		//w.Redirect("/lobby", 302)
 		panic("user room id is invalid")
@@ -64,7 +64,6 @@ func (w *RoomController) WS() {
 		w.Redirect("/login", 302)
 		return
 	}
-	user := *userp
 
 	ws, err := websocket.Upgrade(w.Ctx.ResponseWriter, w.Ctx.Request, nil, 1024, 1024)
 	if err != nil {
@@ -72,16 +71,16 @@ func (w *RoomController) WS() {
 		return
 	}
 	defer func() {
-		userRoomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: user, Text: "", Time: time.Now()})
-		userRoomDetail.RemoveMate(user.Id)
+		userRoomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: userp, Text: "", Time: time.Now()})
+		userRoomDetail.RemoveMate(userp.Id)
 		err := ws.Close()
 		if err != nil {
 			beego.BeeLogger.Error(err.Error())
 			return
 		}
 	}()
-	userRoomDetail.AddMate(user, ws)
-	userRoomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 1, User: user, Text: "", Time: time.Now()})
+	userRoomDetail.AddMate(*userp, ws)
+	userRoomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 1, User: userp, Text: "", Time: time.Now()})
 	type wsData struct {
 		Type int
 		Text string
@@ -94,7 +93,7 @@ func (w *RoomController) WS() {
 			beego.BeeLogger.Warning(err.Error())
 		}
 		beego.BeeLogger.Info("Get user room ws data [%+v]", wsdata)
-		userRoomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: wsdata.Type, User: user, Text: wsdata.Text, Time: time.Now()})
+		userRoomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: wsdata.Type, User: userp, Text: wsdata.Text, Time: time.Now()})
 	}
 	w.Ctx.WriteString("Finish")
 }

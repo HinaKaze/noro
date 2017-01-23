@@ -19,9 +19,10 @@ func (c *LoginController) Post() {
 	if username == "" || password == "" {
 		c.Redirect("/login", 302)
 	}
-	if user, ok := models.GetUserByName(username); ok {
+	if user := models.GetUserByName(username); user != nil {
 		if user.CheckPasswork(password) {
 			user.GenerateNewLoginToken()
+			models.UpdateUser(user)
 			c.SetSecureCookie("noro_", "_n", user.Name)
 			c.SetSecureCookie("noro_", "_s", user.LoginSequence)
 			c.SetSecureCookie("noro_", "_t", user.LoginToken)

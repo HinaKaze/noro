@@ -2,16 +2,42 @@ package main
 
 import (
 	"flag"
+	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	"github.com/hinakaze/iniparser"
 	"github.com/hinakaze/noro/models"
 	_ "github.com/hinakaze/noro/routers"
 )
 
 func main() {
-	dbFlag := flag.Bool("db", false, "true/false :enable/disable db")
+	//	dbFlag := flag.Bool("db", false, "true/false :enable/disable db")
 	flag.Parse()
-	models.Init(*dbFlag)
+	/*
+		db init
+	*/
+	iniparser.DefaultParse("./conf/user.ini")
+	section, ok := iniparser.GetSection("DB")
+	if !ok {
+		panic("ini parse error")
+	}
+	driverName, ok := section.GetValue("driverName")
+	if !ok {
+		panic("[driverName] not found")
+	}
+	dataSource, ok := section.GetValue("dataSource")
+	if !ok {
+		panic("[dataSource] not found")
+	}
+
+	orm.Debug = true
+	orm.RegisterDataBase("default", driverName, dataSource)
+	orm.DefaultTimeLoc = time.Local
+	orm.RegisterModel(new(models.Friendship), new(models.User), new(models.ChatRoom), new(models.ChatMessage))
+	orm.RunSyncdb("default", false, true)
+
+	models.UserRobot = models.GetUserByName("Noro")
 
 	beego.BConfig.WebConfig.Session.SessionProvider = "memory"
 	beego.Run()

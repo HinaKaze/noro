@@ -7,13 +7,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/astaxie/beego/orm"
 	"github.com/gorilla/websocket"
 )
 
 type User struct {
-	Id            int
-	Name          string
-	Friends       []*Friendship
+	Id            int64
+	Name          string        `orm:"unique"`
+	Friends       []*Friendship `orm:"reverse(many)"`
 	HP            int
 	MP            int
 	San           int
@@ -25,14 +26,14 @@ type User struct {
 	LoginToken    string //登陆token，新的登陆session会更新
 }
 
-func (u *User) AddFriend(targetId int) {
-	newFriend := Friendship{UserId1: u.Id, UserId2: targetId}
+func (u *User) AddFriend(friend *User) {
+	newFriend := Friendship{User1: u, User2: friend}
 	u.Friends = append(u.Friends, &newFriend)
 }
 
-func (u *User) GetFriend(targetId int) *Friendship {
+func (u *User) GetFriend(targetId int64) *Friendship {
 	for _, f := range u.Friends {
-		if f.UserId2 == targetId {
+		if f.User2.Id == targetId {
 			return f
 		}
 	}
@@ -71,7 +72,6 @@ func (u *User) ToT(friendFlag bool) (t TUser) {
 			t.Friends = append(t.Friends, f.ToT())
 		}
 	}
-	log.Println(t)
 	return
 }
 
@@ -81,14 +81,14 @@ type UserDetail struct {
 }
 
 type TUser struct {
-	Id      int
+	Id      int64
 	Name    string
 	Gender  int
 	Friends []TFriendship
 }
 
 type UserRoomDetail struct {
-	Id          int
+	Id          int64
 	Owner       *User
 	Mates       []*UserDetail
 	HistoryMsgs []ChatMessage
@@ -117,7 +117,7 @@ func (c *UserRoomDetail) AddMate(u User, ws *websocket.Conn) bool {
 	return true
 }
 
-func (c *UserRoomDetail) RemoveMate(uId int) {
+func (c *UserRoomDetail) RemoveMate(uId int64) {
 	c.Lock()
 	defer c.Unlock()
 	for i := range c.Mates {
@@ -170,4 +170,51 @@ type TUserRoom struct {
 	Owner       TUser
 	HistoryMsgs []TChatMessage
 	Mates       []TUser
+}
+
+/*db*/
+func CreateUser(name string, password string, gender int) (user User) {
+	user.Name = name
+	user.Password = password
+	user.CanLogin = true
+	user.Gender = gender
+	user.GenerateNewLoginSeq()
+	user.GenerateNewLoginToken()
+	return
+}
+
+func SaveUser(user User) *User {
+	var err error
+	user.Id, err = orm.NewOrm().Insert(&user)
+	if err != nil {
+		panic(err.Error())
+	}
+	return &user
+}
+
+func UpdateUser(user *User) {
+	_, err := orm.NewOrm().Update(user)
+	if err != nil {
+		panic(err.Error())
+	}
+}
+
+func GetUser(id int64) (user *User) {
+	user = new(User)
+	user.Id = id
+	err := orm.NewOrm().Read(user)
+	if err != nil {
+		panic(err.Error())
+	}
+	return
+}
+
+func GetUserByName(name string) (user *User) {
+	user = new(User)
+	err := orm.NewOrm().Raw(`select * from "user" where name=?`, name).QueryRow(user)
+	if err != nil {
+		panic(err.Error())
+	}
+	log.Printf("%+v", *user)
+	return
 }

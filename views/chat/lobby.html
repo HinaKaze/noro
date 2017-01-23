@@ -24,6 +24,7 @@ $(document).ready(function() {
         (function(roomId) {
             $("#chat-lobby-room" + roomId+" button").click(function() {
                 $.get("chat/room?id=" + roomId, function(data, status) {
+                    noro.sweepChatLobby();
                     $("#main-content-center").html(data);
                 });
             });
@@ -36,6 +37,9 @@ $(document).ready(function() {
         }
     }
     showRooms();
+
+    /*init*/
+    noro.showChatLobby();
 });
 </script>
 <div class="chat-lobby">

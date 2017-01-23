@@ -46,18 +46,18 @@ $(document).ready(function() {
         }
     })();
 
-    function showRoomMates() {
-        $("#main-content-left").html('');
-        for (u of chatRoom.Mates) {
-            if (u != undefined) {
-                var http = '\
-                    <div><span class="glyphicon glyphicon-user"></span>\
-                    <span class="chat-room-mate">' + u.Name + '</span></div>\
-                ';
-                $("#main-content-left").append(http);
-            }
-        }
-    };
+    // function showRoomMates() {
+    //     $("#main-content-left").html('');
+    //     for (u of chatRoom.Mates) {
+    //         if (u != undefined) {
+    //             var http = '\
+    //                 <div><span class="glyphicon glyphicon-user"></span>\
+    //                 <span class="chat-room-mate">' + u.Name + '</span></div>\
+    //             ';
+    //             $("#main-content-left").append(http);
+    //         }
+    //     }
+    // };
     //showRoomMates();
     /*
         chat-room-common
@@ -146,25 +146,31 @@ $(document).ready(function() {
             $("#user-dashboard-function-input-text").val("");
         }
     });
-    $("#user-dashboard-property-logout").click(function(event) {
+    $("#chat-room-exit").click(function(event) {
         if (noro.chatRoomWS != undefined) {
             noro.chatRoomId = -1;
             noro.chatRoomWS.close();
         }
         noro.sweepChatRoom();
-        $(this).unbind(event);
         $.get("/chat/lobby", function(data, status) {
             $("#main-content-center").html(data);
         });
     });
     $("#chat-room-plus").click(function(event) {
         $("#chat-room-plus-list").toggle(500);
+        // noro.toggleBlur($("#chat-room-plus-list"));
+        // noro.toggleBlur($(".chat-room-topic"));
+        // noro.toggleBlur($(".chat-room-exit"));
+        // noro.toggleBlur($("#chat-room-messages"));
+        // noro.toggleBlur($("#main-footer"));
+        // noro.toggleBlur($("#musubi"));
+        // noro.toggleBlur($("#main-background"));
     });
 })
 </script>
 <div class="chat-room">
     <div class="chat-room-header">
-        <div class="chat-room-exit">登出</div>
+        <div class="chat-room-exit" id="chat-room-exit">登出</div>
         <div class="chat-room-topic">[房间]{{.RoomDetail.Topic}}</div>
         <div class="chat-room-plus" id="chat-room-plus">+</div>
         <div class="chat-room-plus-list" id="chat-room-plus-list">
@@ -173,5 +179,5 @@ $(document).ready(function() {
             <ul>待续</ul>
         </div>
     </div>
-    <div id="chat-room-messages" class="chat-room-messages"></div>
+    <div class="chat-room-messages" id="chat-room-messages"></div>
 </div>

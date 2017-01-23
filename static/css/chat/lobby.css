@@ -1,3 +1,5 @@
+/*create room*/
+
 .chat-lobby-create-btn {
     margin: .1rem .05rem 0 0;
     height: .25rem;
@@ -15,7 +17,10 @@
     text-align: center;
 }
 
-.chat-lobby{
+
+/*room list*/
+
+.chat-lobby {
     width: 100%;
 }
 
@@ -34,7 +39,7 @@
 }
 
 @media (max-width: 640px) {
-    .chat-lobby-room{
+    .chat-lobby-room {
         width: 100%;
         height: 30px;
     }
@@ -46,7 +51,7 @@
     display: block;
     color: #fff;
     text-overflow: ellipsis;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
 .chat-lobby-room-topic {
@@ -70,9 +75,9 @@
     width: .7rem;
     margin-left: 1rem;
     color: #333;
-    background-color: rgba(255,255,255,0.6);
+    background-color: rgba(255, 255, 255, 0.6);
     border: 0 solid transparent;
     border-radius: .04rem;
     text-overflow: ellipsis;
-    white-space: nowrap; 
+    white-space: nowrap;
 }

@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"runtime/debug"
 	"strings"
 	"time"
 
@@ -20,7 +19,7 @@ type ChatRoomController struct {
 }
 
 func (c *ChatRoomController) Get() {
-	roomId, err := c.GetInt("id")
+	roomId, err := c.GetInt64("id")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -71,11 +70,11 @@ func (c *ChatRoomController) Post() {
 func (w *ChatRoomController) WS() {
 	defer func() {
 		if x := recover(); x != nil {
-			beego.BeeLogger.Warning("WebSocket disconnected [%+v],%s", x, debug.Stack())
+			beego.BeeLogger.Warning("WebSocket disconnected [%+v]", x)
 		}
 	}()
 
-	roomId, ok := w.GetSession("roomId").(int)
+	roomId, ok := w.GetSession("roomId").(int64)
 	if !ok {
 		w.Redirect("/lobby", 302)
 	}
@@ -88,7 +87,6 @@ func (w *ChatRoomController) WS() {
 		w.Redirect("/login", 302)
 		return
 	}
-	user := *userp
 
 	ws, err := websocket.Upgrade(w.Ctx.ResponseWriter, w.Ctx.Request, nil, 1024, 1024)
 	if err != nil {
@@ -96,41 +94,40 @@ func (w *ChatRoomController) WS() {
 		return
 	}
 	defer func() {
-		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 1, User: user, Text: "", Time: time.Now()})
-		roomDetail.RemoveMate(user.Id)
+		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 1, User: userp, Text: "", Time: time.Now()})
+		roomDetail.RemoveMate(userp.Id)
 		err := ws.Close()
 		if err != nil {
 			beego.BeeLogger.Error(err.Error())
 			return
 		}
 	}()
-	roomDetail.AddMate(user, ws)
-	roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 0, User: user, Text: "", Time: time.Now()})
+	roomDetail.AddMate(*userp, ws)
+	roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 0, User: userp, Text: "", Time: time.Now()})
 	for {
 		_, bytes, err := ws.ReadMessage()
 		if err != nil {
 			panic(err.Error())
 		}
-		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: user, Text: string(bytes), Time: time.Now()})
+		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: userp, Text: string(bytes), Time: time.Now()})
 		//robot
 		if roomDetail.Id == 1 {
 			answer := GetRobotAnswer(string(bytes))
-			roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: *userRobot, Text: answer, Time: time.Now()})
+			roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: models.UserRobot, Text: answer, Time: time.Now()})
 		}
 	}
 	w.Ctx.WriteString("Finish")
 }
 
 var msg string = `{"key":"bd2fc9d82bab426681a40e6c1393b53d","info":"%s","loc":"noro","userid":"1"}`
-var userRobot *models.User
 
-func init() {
-	var ok bool
-	userRobot, ok = models.GetUser(9988)
-	if !ok {
-		panic("User robot not found")
-	}
-}
+//func init() {
+//	var ok bool
+//	userRobot, ok = models.GetUser(9988)
+//	if !ok {
+//		panic("User robot not found")
+//	}
+//}
 
 func GetRobotAnswer(ask string) (answer string) {
 	askMsg := fmt.Sprintf(msg, ask)

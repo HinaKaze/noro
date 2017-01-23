@@ -15,7 +15,7 @@ func FilterLogin(ctx *context.Context) {
 
 func IsLogin(ctx *context.Context) (*models.User, bool) {
 	if username, ok := ctx.GetSecureCookie("noro_", "_n"); ok {
-		if user, ok := models.GetUserByName(username); ok {
+		if user := models.GetUserByName(username); user != nil {
 			loginToken, ok := ctx.GetSecureCookie("noro_", "_t")
 			if !ok {
 				return nil, false

@@ -1,13 +1,9 @@
 package models
 
-import (
-	"fmt"
-)
-
 type Friendship struct {
 	Id           int
-	UserId1      int
-	UserId2      int
+	User1        *User `orm:"rel(fk)"`
+	User2        *User `orm:"rel(fk)"`
 	Relationship int
 }
 
@@ -16,11 +12,7 @@ func (f *Friendship) AddRelationship(increment int) {
 }
 
 func (f *Friendship) ToT() (t TFriendship) {
-	if u, ok := GetUser(f.UserId2); ok {
-		t.Friend = u.ToT(false)
-	} else {
-		panic(fmt.Sprintf("Target friend id [%d] invalid", f.UserId2))
-	}
+	t.Friend = f.User2.ToT(false)
 
 	t.Relationship = f.Relationship
 	return

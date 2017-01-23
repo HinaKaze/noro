@@ -19,7 +19,7 @@ func (c *RegisterController) Post() {
 	if username == "" || password == "" {
 		c.Redirect("/login", 302)
 	}
-	if _, ok := models.GetUserByName(username); ok {
+	if user := models.GetUserByName(username); user != nil {
 		c.Redirect("/login", 302)
 	} else {
 		newUser := models.CreateUser(username, password, 0)

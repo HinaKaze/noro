@@ -17,4 +17,9 @@ $(document).ready(function() {
     //         $("#main_content").html(data);
     //     });
     // });
+    $("#musubi-omamori").click(function(e){
+        $("#musubi-line").animate({height:"3.5rem"},500);
+        noro.scrollTop();
+        $("#musubi-line").animate({height:"2.5rem"},500);
+    });
 });

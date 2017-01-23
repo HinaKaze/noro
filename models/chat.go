@@ -7,15 +7,15 @@ import (
 )
 
 type ChatRoom struct {
-	Id         int
+	Id         int64
 	Topic      string
-	Creator    User
+	Creator    *User  `orm:"rel(fk)"`
 	MaxMember  uint16 // <= 0 unlimited
 	CreateTime time.Time
 }
 
 type TChatRoom struct {
-	Id          int
+	Id          int64
 	Topic       string
 	Creator     TUser
 	MaxMember   uint16
@@ -39,8 +39,8 @@ func (c *ChatRoom) ToT() (t TChatRoom) {
 
 type ChatMessage struct {
 	Id   int
-	Type int //0 join,1 leave,2 message
-	User User
+	Type int   //0 join,1 leave,2 message
+	User *User `orm:"rel(fk)"`
 	Text string
 	Time time.Time
 }

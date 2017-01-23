@@ -24,36 +24,75 @@ body {
     vertical-align: center;
 }
 
-body {
+.main-background {
+    position: fixed;
     background: url("/static/img/chat-room-background.png") no-repeat center center fixed;
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
+    height: 100%;
+    width: 100%;
+    z-index: -999;
 }
 
-
-/*#left_content{
-	background-image: url(../img/imoto.jpg);
-	background-size: 400px 800px;
-	float: left;
-	width: 400px;
-	height: 800px;
+/*.blur{
+    -moz-filter: blur(2px);
+    -webkit-filter: blur(2px);
+    -o-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
 }*/
 
+/*musubi*/
 
-/*.main-title h1{
-	font-size: 60px;
-	text-shadow:2px 2px 5px #eee;
+.musubi {
+    position: fixed;
+    right: .4rem;
+    top: 0;
+    width: .3rem;
+    z-index: -1;
 }
 
-.main-title h2{
-	font-size: 30px;
-	text-shadow:2px 2px 5px #eee;
+.musubi-line {
+    height: 3rem;
+    margin: 0 .1rem;
+    transition: height 1s;
+    background-color: #333;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: height 1s;
+}
+
+.musubi-omamori {
+    height: .6rem;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    font-size: .2rem;
+    font-weight: bold;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.musubi-omamori:hover {
+    cursor: pointer;
+    animation: omamori 3s infinite;
+    -moz-animation: omamori 3s infinite;
+    -webkit-animation: omamori 3s infinite;
+    -o-animation: omamori 3s infinite;
+}
+
+/*@-webkit-keyframes omamori 
+{
+0%   {transform:rotateY(0deg);}
+25%  {transform:rotateY(45deg);}
+50%  {transform:rotateY(0deg);}
+75% {transform:rotateY(-45deg);}
+100%  {transform:rotateY(0deg);}
 }*/
 
-
-/*#main_back:hover{
-	cursor: pointer;
-}*/
-
+@-webkit-keyframes omamori 
+{
+0%   {transform:rotateY(0deg);}
+50%  {transform:rotateY(180deg);}
+100%  {transform:rotateY(360deg);}
+}

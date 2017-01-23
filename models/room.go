@@ -2,7 +2,9 @@ package models
 
 import (
 	"sync"
+	"time"
 
+	"github.com/astaxie/beego/orm"
 	"github.com/gorilla/websocket"
 )
 
@@ -11,14 +13,51 @@ var ChatRoomMgr *ChatRoomManager
 func init() {
 	ChatRoomMgr = new(ChatRoomManager)
 	ChatRoomMgr.Init()
-	ChatRoomMgr.RoomMap = make(map[int]*ChatRoomDetail)
-	if room, ok := GetRoom(1); ok {
-		ChatRoomMgr.AddRoomDetail(*room)
-	}
+	ChatRoomMgr.RoomMap = make(map[int64]*ChatRoomDetail)
 }
 
+/*db */
+func CreateRoom(topic string, creator User, maxMember int) (room ChatRoom) {
+	room.Topic = topic
+	room.Creator = &creator
+	if maxMember > 100 {
+		maxMember = 100
+	}
+	room.MaxMember = uint16(maxMember)
+	room.CreateTime = time.Now()
+	return
+}
+
+func SaveRoom(r ChatRoom) *ChatRoom {
+	var err error
+	r.Id, err = orm.NewOrm().Insert(&r)
+	if err != nil {
+		panic(err.Error())
+	}
+	return &r
+}
+
+func GetRooms() (chatRooms []ChatRoom) {
+	_, err := orm.NewOrm().Raw("select * from chat_room").QueryRows(&chatRooms)
+	if err != nil {
+		panic(err.Error())
+	}
+	return
+}
+
+func GetRoom(id int64) (room *ChatRoom) {
+	room = new(ChatRoom)
+	room.Id = id
+	err := orm.NewOrm().Read(room)
+	if err != nil {
+		panic(err.Error())
+	}
+	return
+}
+
+/*runtime*/
 type ChatRoomManager struct {
-	RoomMap map[int]*ChatRoomDetail
+	RoomMap map[int64]*ChatRoomDetail
 	rwmutex *sync.RWMutex
 }
 
@@ -42,13 +81,13 @@ func (c *ChatRoomManager) addRoomDetail(room ChatRoom) *ChatRoomDetail {
 	return &newDetail
 }
 
-func (c *ChatRoomManager) GetRoomDetail(roomId int) (detail *ChatRoomDetail, ok bool) {
+func (c *ChatRoomManager) GetRoomDetail(roomId int64) (detail *ChatRoomDetail, ok bool) {
 	c.rwmutex.RLock()
 	defer c.rwmutex.RUnlock()
 	if detail, ok = c.RoomMap[roomId]; ok {
 		return
 	} else {
-		if room, ok := GetRoom(roomId); ok {
+		if room := GetRoom(roomId); room != nil {
 			detail = c.addRoomDetail(*room)
 			return detail, true
 		} else {
@@ -86,7 +125,7 @@ func (c *ChatRoomDetail) AddMate(u User, ws *websocket.Conn) bool {
 	return true
 }
 
-func (c *ChatRoomDetail) RemoveMate(uId int) {
+func (c *ChatRoomDetail) RemoveMate(uId int64) {
 	c.Lock()
 	defer c.Unlock()
 	for i := range c.Mates {
@@ -118,6 +157,7 @@ func (c *ChatRoomDetail) BroadcastMessage(m ChatMessage) {
 	}
 }
 
+/*to client*/
 type TChatRoomDetail struct {
 	TChatRoom
 	Mates       []TUser
