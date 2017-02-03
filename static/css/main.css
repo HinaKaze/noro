@@ -75,10 +75,10 @@ body {
 
 .musubi-omamori:hover {
     cursor: pointer;
-    animation: omamori 3s infinite;
+    /*animation: omamori 3s infinite;
     -moz-animation: omamori 3s infinite;
     -webkit-animation: omamori 3s infinite;
-    -o-animation: omamori 3s infinite;
+    -o-animation: omamori 3s infinite;*/
 }
 
 /*@-webkit-keyframes omamori 
@@ -90,9 +90,9 @@ body {
 100%  {transform:rotateY(0deg);}
 }*/
 
-@-webkit-keyframes omamori 
+/*@-webkit-keyframes omamori 
 {
 0%   {transform:rotateY(0deg);}
 50%  {transform:rotateY(180deg);}
 100%  {transform:rotateY(360deg);}
-}
+}*/

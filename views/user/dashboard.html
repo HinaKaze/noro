@@ -17,6 +17,11 @@ $(document).ready(function() {
             $("#main-content-center").html(data);
         });
     });
+    $("#user-dashboard-function-jump-home").click(function(){
+        $.get("/user/home?id=1",function(data,status){
+            $("#main-content-center").html(data);
+        })
+    });
 });
 </script>
 <div class="user-dashboard">
@@ -49,7 +54,7 @@ $(document).ready(function() {
                     </ul>
                 </div> -->
             </div>
-            <div class="user-dashboard-function-jump-home">个人</div>
+            <div class="user-dashboard-function-jump-home" id="user-dashboard-function-jump-home">个人</div>
         </div>
     </div>
 </div>

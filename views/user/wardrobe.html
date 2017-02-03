@@ -1,0 +1,24 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    $.get("/user/show", function(data, status) {
+        $("#user-wardrobe-show").html(data);
+    });
+});
+</script>
+<div class="user-wardrobe">
+    <div class="user-wardrobe-left">
+        <div class="user-wardrobe-box user-wardrobe-clothes"></div>
+        <div class="user-wardrobe-box user-wardrobe-trousers"></div>
+    </div>
+    <div class="user-wardrobe-center">
+        <div class="user-wardrobe-box user-wardrobe-hair"></div>
+        <div class="user-wardrobe-show" id="user-wardrobe-show"></div>
+        <div class="user-wardrobe-box user-wardrobe-shoe"></div>
+    </div>
+    <div class="user-wardrobe-right">
+        <div class="user-wardrobe-box user-wardrobe-emotion"></div>
+    </div>
+    <div>
+        <button class="btn-warning btn">保存</button>
+    </div>
+</div>

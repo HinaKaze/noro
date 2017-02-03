@@ -1,0 +1,19 @@
+<div class="user-show">
+    <div class="user-show-ele user-show-body"></div>
+    <div class="user-show-ele user-show-hair"></div>
+    <div class="user-show-ele user-show-emotion"></div>
+    <div class="user-show-ele user-show-clothes"></div>
+    <div class="user-show-ele user-show-trousers"></div>
+    <div class="user-show-ele user-show-shoes"></div>
+</div>
+<script type="text/javascript">
+	var show = {{.Show}}
+	$(document).ready(function(){
+		$(".user-show-body").css("background-image","/static/img/wardrobe/body/body"+show.Body+".png")
+		$(".user-show-hair").css("background-image","/static/img/wardrobe/hair/hair"+show.Hair+".png")
+		$(".user-show-emotion").css("background-image","/static/img/wardrobe/emotion/emotion"+show.Emotion+".png")
+		$(".user-show-clothes").css("background-image","/static/img/wardrobe/clothes/clothes"+show.Clothes+".png")
+		$(".user-show-trousers").css("background-image","/static/img/wardrobe/trousers/trousers"+show.Trousers+".png")
+		$(".user-show-shoes").css("background-image","/static/img/wardrobe/shoes/shoes"+show.Shoes+".png")
+	});
+</script>

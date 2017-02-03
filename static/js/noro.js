@@ -34,6 +34,12 @@ class Noro {
         $("#main-content-left").html("");
         $("#main-header").css("display", "block");
     }
+    showUserHome(){
+        $("#main-header").css("display", "none");
+        $("#main-content-left").css("display","none");
+        $("#main-content-right").css("display","none");
+        $("#main-content-center").removeClass("col-md-6");
+    }
     changeMainBackground(imgurl) {
         $("#main-content").css("background-image", 'url("' + imgurl + '")');
         $("#main-content").css("background-position", "center");

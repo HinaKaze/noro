@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -35,9 +36,14 @@ func main() {
 	orm.RegisterDataBase("default", driverName, dataSource)
 	orm.DefaultTimeLoc = time.Local
 	orm.RegisterModel(new(models.Friendship), new(models.User), new(models.ChatRoom), new(models.ChatMessage))
+	orm.RegisterModel(new(models.Show))
 	orm.RunSyncdb("default", false, true)
 
 	models.UserRobot = models.GetUserByName("Noro")
+	//	models.SaveShow(models.Show{User: &models.User{Id: 3}, Body: 1, Hair: 1, Emotion: 1, Clothes: 1, Trousers: 1, Shoes: 1})
+	fakeUser := models.CreateUser("nigger", "nigger", 1)
+	models.SaveUser(fakeUser)
+	log.Println(models.GetUser(3).Show)
 
 	beego.BConfig.WebConfig.Session.SessionProvider = "memory"
 	beego.Run()

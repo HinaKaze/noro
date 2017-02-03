@@ -1,6 +1,8 @@
 package user
 
 import (
+	"log"
+
 	"github.com/astaxie/beego"
 	"github.com/hinakaze/noro/models"
 
@@ -11,18 +13,18 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type RoomController struct {
+type HomeController struct {
 	beego.Controller
 }
 
-func (c *RoomController) Get() {
+func (c *HomeController) Get() {
 	userId, err := c.GetInt64("id")
 	if err != nil {
-		panic(err.Error())
+		log.Println(err.Error())
 	}
 	user := models.GetUser(userId)
 	if user == nil {
-		panic(fmt.Sprintf("Try to enter a invalid user room [%d]", userId))
+		log.Println(fmt.Sprintf("Try to enter a invalid user home [%d]", userId))
 	}
 	userRoom, ok := models.GetUserRoomDetail(userId)
 	if !ok {
@@ -39,10 +41,10 @@ func (c *RoomController) Get() {
 	c.SetSession("userRoomId", userId)
 	c.Data["Room"] = userRoom.ToT()
 	c.Data["Myself"] = myself.ToT(false)
-	c.TplName = "user/room.html"
+	c.TplName = "user/home.html"
 }
 
-func (w *RoomController) WS() {
+func (w *HomeController) WS() {
 	defer func() {
 		if x := recover(); x != nil {
 			beego.BeeLogger.Warning("User room WebSocket disconnected [%+v],%s", x, debug.Stack())

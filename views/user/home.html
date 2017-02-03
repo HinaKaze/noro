@@ -1,11 +1,13 @@
 <script type="text/javascript">
 $(document).ready(function() {
+    var myself = {{.Myself}};
+    var room = {{.Room}};
     /*
 
     Virtual Room
 
     */
-    var game = new Phaser.Game(800, 400, Phaser.AUTO, "virtual_room", {
+    var game = new Phaser.Game(800, 400, Phaser.AUTO, "user-home-room", {
         preload: preload,
         create: create,
         update: update,
@@ -24,8 +26,8 @@ $(document).ready(function() {
         game.load.image("sky", assetePath + "night-background.jpg");
         game.load.image("ground", assetePath + "platform.png");
         game.load.image("star", assetePath + "star.png");
-        game.load.image("imoto",assetePath + "imoto.png");
-        game.load.image("ani",assetePath + "ani.png");
+        game.load.image("imoto", assetePath + "imoto.png");
+        game.load.image("ani", assetePath + "ani.png");
         game.load.spritesheet("dude", assetePath + "dude.png", 32, 44);
     }
 
@@ -153,18 +155,19 @@ $(document).ready(function() {
             }
         }
     }
+
     function newPlayer(user) {
         console.log(players.length);
 
         var player
-        if (user.Gender == 0){
-            player = game.add.sprite(20,"imoto");
-        }else if(user.Gender == 1){
-            player = game.add.sprite(20,100,"ani");
-        }else{
-            player = game.add.sprite(20,100,"imoto");
+        if (user.Gender == 0) {
+            player = game.add.sprite(20,100, "imoto");
+        } else if (user.Gender == 1) {
+            player = game.add.sprite(20, 100, "ani");
+        } else {
+            player = game.add.sprite(20, 100, "imoto");
         }
-        
+
         game.physics.arcade.enable(player);
         player.body.gravity.y = 300;
         player.body.bounce.y = 0.2;
@@ -175,7 +178,7 @@ $(document).ready(function() {
         // game.physics.arcade.enable(player);
         // player.body.bounce.y = 0.2;
         // player.body.gravity.y = 300;
-        
+
         // player.animations.add("left", [0, 1, 2, 3], 10, true);
         // player.animations.add("right", [5, 6, 7, 8], 10, true);
         player.noro = {
@@ -256,14 +259,12 @@ $(document).ready(function() {
 
         };
     }
-        noro.userRoomWS.onclose = function(event) {
-            console.log("ws cloesed!")
-            $.get("/user/room?id=" + {{.Room.Owner.Id}}, function(data, status) {
-                $("#content").html(data);
-            });
-        };
-    var myself = {{.Myself}};
-    var room = {{.Room}}
+    noro.userRoomWS.onclose = function(event) {
+        console.log("ws cloesed!")
+        // $.get("/user/room?id=" + {{.Room.Owner.Id}}, function(data, status) {
+        //     $("#main-content-center").html(data);
+        // });
+    };
 
     function sendWSData(type, text) {
         noro.userRoomWS.send(JSON.stringify({
@@ -271,7 +272,7 @@ $(document).ready(function() {
             Text: text
         }));
     }
-    
+
 
     function changePlayerState(user, state) {
         var p = players[user.Id]
@@ -281,16 +282,12 @@ $(document).ready(function() {
     }
 
 
-
-    
-
     function collectStar(player, star) {
         star.kill();
         score += 10;
         //scoreText.text = "Score:" + score;
     }
     $("#input_send").click(function() {
-        console.log("dafdasfs")
         var message = $("#input_text").val()
         if (message == "") {
             return
@@ -300,7 +297,6 @@ $(document).ready(function() {
         $("#input_text").val("")
     });
     $("#input_text").keydown(function(e) {
-        console.log(e.keyCode);
         //enter trigger
         if (e.keyCode == 13) {
             var message = $("#input_text").val()
@@ -325,8 +321,8 @@ $(document).ready(function() {
         addText(user, text, time)
     }
 
-function addText(user, text, time) {
-    var http = '\
+    function addText(user, text, time) {
+        var http = '\
         <div class="message">\
             <div class="message-user">\
                 <img class="message-user-avatar" src="static/img/user/avatar' + user.Id + '.jpg"></img>\
@@ -338,16 +334,27 @@ function addText(user, text, time) {
             </div>\
         </div>\
         '
-    $("#messages").append(http)
-}
+        $("#messages").append(http)
+    }
 
-showHistoryMsgs();
+    showHistoryMsgs();
+    noro.showUserHome();
+
+    //load wardrobe
+    $.get("/user/wardrobe",function(data,status){
+        $("#user-home-messages").html(data);
+    });
 });
 </script>
 <!-- <div id="house_content" style="width:1000px,height:500px;background-color:#fff">
 </div> -->
-<div id="virtual_room"></div>
-<div class="user-room">
-    <div id="messages">
+<div id="user-home">
+    <div class="user-home-header">
+        <div class="user-home-title">{{.Myself.Name}}的房间</div>
+    </div>
+    <div class="user-home-content">
+        <div class="user-home-room" id="user-home-room"></div>
+        <div class="user-home-messages" id="user-home-messages"></div>
+        <div class="user-home-profile">This is my profile</div>
     </div>
 </div>

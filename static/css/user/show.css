@@ -1,0 +1,43 @@
+/*user show*/
+.user-show{
+	position: relative;
+	width: 3rem;
+	height: 3rem;
+}
+
+.user-show-ele{
+	position: absolute;
+	background-size: 3rem;
+	width: 3rem;
+	height: 3rem;
+}
+
+.user-show-body{
+	/*background-image: url("/static/img/wardrobe/body/body1.png");*/
+	z-index: 0;
+}
+
+.user-show-hair{
+	/*background-image: url("/static/img/wardrobe/hair/hair1.png");*/
+	z-index: 2;
+}
+
+.user-show-emotion{
+	/*background-image: url("/static/img/wardrobe/emotion/emo2.png");*/
+	z-index: 1;
+}
+
+.user-show-clothes{
+	/*background-image: url("/static/img/wardrobe/clothes/clothes2.png");*/
+	z-index: 2;
+}
+
+.user-show-trousers{
+	/*background-image: url("/static/img/wardrobe/trousers/trousers1.png");*/
+	z-index: 1;
+}
+
+.user-show-shoes{
+	/*background-image: url("/static/img/wardrobe/shoe/shoe1.png");*/
+	z-index: 1;
+}

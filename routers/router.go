@@ -21,6 +21,8 @@ func init() {
 
 	//user
 	beego.Router("/user/dashboard", &user.DashboardController{})
-	beego.Router("/user/room", &user.RoomController{})
-	beego.Router("/user/ws", &user.RoomController{}, "get:WS")
+	beego.Router("/user/home", &user.HomeController{})
+	beego.Router("/user/ws", &user.HomeController{}, "get:WS")
+	beego.Router("/user/wardrobe", &user.WardrobeController{})
+	beego.Router("/user/show", &user.ShowController{})
 }

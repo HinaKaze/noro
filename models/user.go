@@ -24,6 +24,7 @@ type User struct {
 	CanLogin      bool
 	LoginSequence string //登陆序列，仅当用户口令修改后更新
 	LoginToken    string //登陆token，新的登陆session会更新
+	Show          *Show  `orm:"reverse(one)"`
 }
 
 func (u *User) AddFriend(friend *User) {
@@ -72,6 +73,7 @@ func (u *User) ToT(friendFlag bool) (t TUser) {
 			t.Friends = append(t.Friends, f.ToT())
 		}
 	}
+	t.Show = u.Show.ToT()
 	return
 }
 
@@ -85,6 +87,7 @@ type TUser struct {
 	Name    string
 	Gender  int
 	Friends []TFriendship
+	Show    TShow
 }
 
 type UserRoomDetail struct {
@@ -180,6 +183,7 @@ func CreateUser(name string, password string, gender int) (user User) {
 	user.Gender = gender
 	user.GenerateNewLoginSeq()
 	user.GenerateNewLoginToken()
+	user.Show = &Show{User: &user, Body: 1, Hair: 1, Emotion: 1, Clothes: 1, Trousers: 1, Shoes: 1}
 	return
 }
 
@@ -203,6 +207,7 @@ func GetUser(id int64) (user *User) {
 	user = new(User)
 	user.Id = id
 	err := orm.NewOrm().Read(user)
+	orm.NewOrm().Read()
 	if err != nil {
 		panic(err.Error())
 	}

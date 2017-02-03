@@ -36,7 +36,21 @@ func SaveUserRoomDetail(room *UserRoomDetail) {
 }
 func GetUserRoomDetail(id int64) (room *UserRoomDetail, ok bool) {
 	userRoomMutex.RLock()
-	defer userRoomMutex.RUnlock()
 	room, ok = userRoomMap[id]
-	return
+	userRoomMutex.RUnlock()
+	if ok {
+		return room, true
+	} else {
+		if u := GetUser(id); u == nil {
+			return nil, false
+		} else {
+			room = CreateUserRoomDetail(u)
+			if room == nil {
+				return nil, false
+			} else {
+				SaveUserRoomDetail(room)
+				return room, true
+			}
+		}
+	}
 }
