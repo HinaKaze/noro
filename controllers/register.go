@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/hinakaze/noro/models"
+	muser "github.com/hinakaze/noro/models/user"
 )
 
 type RegisterController struct {
@@ -19,11 +19,10 @@ func (c *RegisterController) Post() {
 	if username == "" || password == "" {
 		c.Redirect("/login", 302)
 	}
-	if user := models.GetUserByName(username); user != nil {
+	if user := muser.GetUserByName(username); user != nil {
 		c.Redirect("/login", 302)
 	} else {
-		newUser := models.CreateUser(username, password, 0)
-		models.SaveUser(newUser)
+		muser.CreateUser(username, password, 0)
 		c.Redirect("/login", 302)
 	}
 }

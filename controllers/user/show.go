@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/hinakaze/noro/models"
+	muser "github.com/hinakaze/noro/models/user"
 )
 
 type ShowController struct {
@@ -10,7 +10,7 @@ type ShowController struct {
 }
 
 func (this *ShowController) Get() {
-	myself, ok := this.GetSession("user").(*models.User)
+	myself, ok := this.GetSession("user").(*muser.User)
 	if !ok {
 		this.Redirect("/login", 302)
 		return

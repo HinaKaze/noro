@@ -2,7 +2,7 @@ package chat
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/hinakaze/noro/models"
+	mchat "github.com/hinakaze/noro/models/chat"
 )
 
 type ChatLobbyController struct {
@@ -10,8 +10,8 @@ type ChatLobbyController struct {
 }
 
 func (c *ChatLobbyController) Get() {
-	tRooms := make([]models.TChatRoom, 0)
-	rooms := models.GetRooms()
+	tRooms := make([]mchat.TChatRoom, 0)
+	rooms := mchat.GetRooms()
 	for _, r := range rooms {
 		tRooms = append(tRooms, r.ToT())
 	}

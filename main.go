@@ -1,20 +1,18 @@
 package main
 
 import (
-	"flag"
-	"log"
 	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/hinakaze/iniparser"
-	"github.com/hinakaze/noro/models"
+	mchat "github.com/hinakaze/noro/models/chat"
+	muser "github.com/hinakaze/noro/models/user"
 	_ "github.com/hinakaze/noro/routers"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	//	dbFlag := flag.Bool("db", false, "true/false :enable/disable db")
-	flag.Parse()
 	/*
 		db init
 	*/
@@ -35,15 +33,15 @@ func main() {
 	orm.Debug = true
 	orm.RegisterDataBase("default", driverName, dataSource)
 	orm.DefaultTimeLoc = time.Local
-	orm.RegisterModel(new(models.Friendship), new(models.User), new(models.ChatRoom), new(models.ChatMessage))
-	orm.RegisterModel(new(models.Show))
+	orm.RegisterModel(new(muser.Friendship), new(muser.User), new(muser.Show))
+	orm.RegisterModel(new(mchat.ChatRoom), new(mchat.ChatMessage))
 	orm.RunSyncdb("default", false, true)
 
-	models.UserRobot = models.GetUserByName("Noro")
+	//	models.UserRobot = models.GetUserByName("Noro")
 	//	models.SaveShow(models.Show{User: &models.User{Id: 3}, Body: 1, Hair: 1, Emotion: 1, Clothes: 1, Trousers: 1, Shoes: 1})
-	fakeUser := models.CreateUser("nigger", "nigger", 1)
-	models.SaveUser(fakeUser)
-	log.Println(models.GetUser(3).Show)
+	//	fakeUser := models.CreateUser("nigger", "nigger", 1)
+	//	models.SaveUser(fakeUser)
+	//	log.Println(models.GetUser(3).Show)
 
 	beego.BConfig.WebConfig.Session.SessionProvider = "memory"
 	beego.Run()

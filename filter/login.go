@@ -2,7 +2,7 @@ package filter
 
 import (
 	"github.com/astaxie/beego/context"
-	"github.com/hinakaze/noro/models"
+	muser "github.com/hinakaze/noro/models/user"
 )
 
 func FilterLogin(ctx *context.Context) {
@@ -13,9 +13,9 @@ func FilterLogin(ctx *context.Context) {
 	}
 }
 
-func IsLogin(ctx *context.Context) (*models.User, bool) {
+func IsLogin(ctx *context.Context) (*muser.User, bool) {
 	if username, ok := ctx.GetSecureCookie("noro_", "_n"); ok {
-		if user := models.GetUserByName(username); user != nil {
+		if user := muser.GetUserByName(username); user != nil {
 			loginToken, ok := ctx.GetSecureCookie("noro_", "_t")
 			if !ok {
 				return nil, false

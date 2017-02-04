@@ -1,16 +1,15 @@
-package models
+package user
 
 import (
 	"crypto/md5"
 	"fmt"
-	"log"
-	"sync"
 	"time"
 
 	"github.com/astaxie/beego/orm"
 	"github.com/gorilla/websocket"
 )
 
+/*def*/
 type User struct {
 	Id            int64
 	Name          string        `orm:"unique"`
@@ -63,23 +62,23 @@ func (u *User) GenerateNewLoginToken() {
 	u.LoginToken = fmt.Sprintf("%x", m5.Sum([]byte(string(time.Now().Unix())+u.Name)))
 }
 
-func (u *User) ToT(friendFlag bool) (t TUser) {
+func (u *User) ToT(flag bool) (t TUser) {
 	t.Id = u.Id
 	t.Name = u.Name
 	t.Gender = u.Gender
-	if friendFlag {
+	if flag {
 		t.Friends = make([]TFriendship, 0)
 		for _, f := range u.Friends {
 			t.Friends = append(t.Friends, f.ToT())
 		}
+		t.Show = u.Show.ToT()
 	}
-	t.Show = u.Show.ToT()
 	return
 }
 
-type UserDetail struct {
+type RUser struct {
 	User
-	ws *websocket.Conn
+	WS *websocket.Conn
 }
 
 type TUser struct {
@@ -90,110 +89,28 @@ type TUser struct {
 	Show    TShow
 }
 
-type UserRoomDetail struct {
-	Id          int64
-	Owner       *User
-	Mates       []*UserDetail
-	HistoryMsgs []ChatMessage
-	sync.RWMutex
-}
-
-func (c *UserRoomDetail) Init() {
-	c.Mates = make([]*UserDetail, 0)
-	c.HistoryMsgs = make([]ChatMessage, 0)
-}
-
-func (c *UserRoomDetail) AddMate(u User, ws *websocket.Conn) bool {
-	c.Lock()
-	defer c.Unlock()
-	//	if c.MaxMember <= uint16(len(c.Mates)) {
-	//		return false
-	//	}
-	newUserDetail := &UserDetail{User: u, ws: ws}
-	//	for _, ou := range c.Mates {
-	//		if ou.Id == u.Id {
-	//			ou = newUserDetail
-	//			return true
-	//		}
-	//	}
-	c.Mates = append(c.Mates, newUserDetail)
-	return true
-}
-
-func (c *UserRoomDetail) RemoveMate(uId int64) {
-	c.Lock()
-	defer c.Unlock()
-	for i := range c.Mates {
-		if c.Mates[i].Id == uId {
-			c.Mates = append(c.Mates[:i], c.Mates[i+1:]...)
-			break
-		}
-	}
-	return
-}
-
-func (c *UserRoomDetail) BroadcastMessage(m ChatMessage) {
-	c.RLock()
-	defer c.RUnlock()
-	if m.Type == 3 {
-		if len(c.HistoryMsgs) >= 15 {
-			c.HistoryMsgs = append(c.HistoryMsgs[1:], m)
-		} else {
-			c.HistoryMsgs = append(c.HistoryMsgs, m)
-		}
-		index := 1
-		for i := range c.HistoryMsgs {
-			c.HistoryMsgs[i].Id = index
-			index++
-		}
-	}
-	tm := m.ToT()
-	for _, mate := range c.Mates {
-		if m.User.Id == mate.User.Id {
-			continue
-		}
-		mate.ws.WriteJSON(tm)
-	}
-}
-
-func (this *UserRoomDetail) ToT() (t TUserRoom) {
-	t.Owner = this.Owner.ToT(false)
-	t.HistoryMsgs = make([]TChatMessage, 0)
-	for _, msg := range this.HistoryMsgs {
-		t.HistoryMsgs = append(t.HistoryMsgs, msg.ToT())
-	}
-	t.Mates = make([]TUser, 0)
-	for _, mate := range this.Mates {
-		t.Mates = append(t.Mates, mate.ToT(false))
-	}
-	return
-}
-
-type TUserRoom struct {
-	Owner       TUser
-	HistoryMsgs []TChatMessage
-	Mates       []TUser
-}
-
-/*db*/
-func CreateUser(name string, password string, gender int) (user User) {
+/*logic*/
+func CreateUser(name string, password string, gender int) (user *User) {
 	user.Name = name
 	user.Password = password
 	user.CanLogin = true
 	user.Gender = gender
 	user.GenerateNewLoginSeq()
 	user.GenerateNewLoginToken()
-	user.Show = &Show{User: &user, Body: 1, Hair: 1, Emotion: 1, Clothes: 1, Trousers: 1, Shoes: 1}
+	user = SaveUser(user)
+	user.Show = &Show{User: user, Body: 1, Hair: 1, Emotion: 1, Clothes: 1, Trousers: 1, Shoes: 1}
+	user.Show = SaveShow(user.Show)
 	return
 }
 
-func SaveUser(user User) *User {
+/*db*/
+func SaveUser(user *User) *User {
 	var err error
-	user.Id, err = orm.NewOrm().Insert(&user)
+	user.Id, err = orm.NewOrm().Insert(user)
 	if err != nil {
 		panic(err.Error())
 	}
-	return &user
+	return user
 }
 
 func UpdateUser(user *User) {
@@ -207,7 +124,14 @@ func GetUser(id int64) (user *User) {
 	user = new(User)
 	user.Id = id
 	err := orm.NewOrm().Read(user)
-	orm.NewOrm().Read()
+	if err != nil {
+		panic(err.Error())
+	}
+	_, err = orm.NewOrm().LoadRelated(user, "Show")
+	if err != nil {
+		panic(err.Error())
+	}
+	_, err = orm.NewOrm().LoadRelated(user, "Friends")
 	if err != nil {
 		panic(err.Error())
 	}
@@ -220,6 +144,5 @@ func GetUserByName(name string) (user *User) {
 	if err != nil {
 		panic(err.Error())
 	}
-	log.Printf("%+v", *user)
-	return
+	return GetUser(user.Id)
 }

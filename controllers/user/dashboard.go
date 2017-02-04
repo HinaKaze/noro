@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/hinakaze/noro/models"
+	muser "github.com/hinakaze/noro/models/user"
 )
 
 type DashboardController struct {
@@ -10,7 +10,7 @@ type DashboardController struct {
 }
 
 func (c *DashboardController) Get() {
-	userp, ok := c.GetSession("user").(*models.User)
+	userp, ok := c.GetSession("user").(*muser.User)
 	if !ok {
 		c.Ctx.WriteString("")
 		return

@@ -11,7 +11,8 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/gorilla/websocket"
-	"github.com/hinakaze/noro/models"
+	mchat "github.com/hinakaze/noro/models/chat"
+	muser "github.com/hinakaze/noro/models/user"
 )
 
 type ChatRoomController struct {
@@ -25,12 +26,12 @@ func (c *ChatRoomController) Get() {
 	}
 	c.SetSession("roomId", roomId)
 
-	userp, ok := c.GetSession("user").(*models.User)
+	userp, ok := c.GetSession("user").(*muser.User)
 	if !ok {
 		c.Redirect("/login", 302)
 		return
 	}
-	roomDetail, ok := models.ChatRoomMgr.GetRoomDetail(roomId)
+	roomDetail, ok := mchat.ChatRoomMgr.GetRoom(roomId)
 	if roomDetail == nil || !ok {
 		panic(fmt.Sprintf("Room [%d] invalid", roomId))
 	}
@@ -50,14 +51,12 @@ func (c *ChatRoomController) Post() {
 	if maxmember <= 0 {
 		c.Redirect("/login", 302)
 	}
-	userp, ok := c.GetSession("user").(*models.User)
+	userp, ok := c.GetSession("user").(*muser.User)
 	if !ok {
 		c.Redirect("/login", 302)
 		return
 	}
-	user := *userp
-	chatRoom := models.CreateRoom(topic, user, maxmember)
-	models.SaveRoom(chatRoom)
+	chatRoom := mchat.CreateRoom(topic, userp, maxmember)
 
 	bytes, err := json.Marshal(chatRoom.ToT())
 	if err != nil {
@@ -78,11 +77,11 @@ func (w *ChatRoomController) WS() {
 	if !ok {
 		w.Redirect("/lobby", 302)
 	}
-	roomDetail, ok := models.ChatRoomMgr.GetRoomDetail(roomId)
+	roomDetail, ok := mchat.ChatRoomMgr.GetRoom(roomId)
 	if roomDetail == nil || !ok {
 		w.Redirect("/lobby", 302)
 	}
-	userp, ok := w.GetSession("user").(*models.User)
+	userp, ok := w.GetSession("user").(*muser.User)
 	if !ok {
 		w.Redirect("/login", 302)
 		return
@@ -94,7 +93,7 @@ func (w *ChatRoomController) WS() {
 		return
 	}
 	defer func() {
-		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 1, User: userp, Text: "", Time: time.Now()})
+		roomDetail.BroadcastMessage(mchat.ChatMessage{Id: 1, Type: 1, User: userp, Text: "", Time: time.Now()})
 		roomDetail.RemoveMate(userp.Id)
 		err := ws.Close()
 		if err != nil {
@@ -103,17 +102,17 @@ func (w *ChatRoomController) WS() {
 		}
 	}()
 	roomDetail.AddMate(*userp, ws)
-	roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 0, User: userp, Text: "", Time: time.Now()})
+	roomDetail.BroadcastMessage(mchat.ChatMessage{Id: 1, Type: 0, User: userp, Text: "", Time: time.Now()})
 	for {
 		_, bytes, err := ws.ReadMessage()
 		if err != nil {
 			panic(err.Error())
 		}
-		roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: userp, Text: string(bytes), Time: time.Now()})
+		roomDetail.BroadcastMessage(mchat.ChatMessage{Id: 1, Type: 2, User: userp, Text: string(bytes), Time: time.Now()})
 		//robot
 		if roomDetail.Id == 1 {
 			answer := GetRobotAnswer(string(bytes))
-			roomDetail.BroadcastMessage(models.ChatMessage{Id: 1, Type: 2, User: models.UserRobot, Text: answer, Time: time.Now()})
+			roomDetail.BroadcastMessage(mchat.ChatMessage{Id: 1, Type: 2, User: muser.UserRobot, Text: answer, Time: time.Now()})
 		}
 	}
 	w.Ctx.WriteString("Finish")

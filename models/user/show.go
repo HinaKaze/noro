@@ -1,11 +1,12 @@
-package models
+package user
 
 import (
 	"github.com/astaxie/beego/orm"
 )
 
-type TShow struct {
+type Show struct {
 	Id       int64
+	User     *User `orm:"rel(one)"`
 	Body     int
 	Hair     int
 	Emotion  int
@@ -14,9 +15,8 @@ type TShow struct {
 	Shoes    int
 }
 
-type Show struct {
+type TShow struct {
 	Id       int64
-	User     *User `orm:"null;rel(one);on_delete(set_null)"`
 	Body     int
 	Hair     int
 	Emotion  int
@@ -59,11 +59,11 @@ func (this *Show) ToT() (t TShow) {
 	return
 }
 
-func SaveShow(show Show) *Show {
+func SaveShow(show *Show) *Show {
 	var err error
-	show.Id, err = orm.NewOrm().Insert(&show)
+	show.Id, err = orm.NewOrm().Insert(show)
 	if err != nil {
 		panic(err.Error())
 	}
-	return &show
+	return show
 }
