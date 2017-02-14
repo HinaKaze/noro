@@ -11,6 +11,10 @@ $(document).ready(function() {
     //         $("#content").html(data);
     //     });
     // });
+    $.get("/user/show", function(data, status) {
+        $("#user-dashboard-show").html(data);
+    });
+
     $("#user-dashborad-function-jump-chat").click(function() {
         noro.sweepChatRoom();
         $.get("/chat/lobby", function(data, status) {
@@ -25,8 +29,8 @@ $(document).ready(function() {
 });
 </script>
 <div class="user-dashboard">
-    <div class="user-dashboard-show">
-        <img class="user-dashboard-show-avatar" src="static/img/user/avatar{{.User.Id}}.jpg"></img>
+    <div class="user-dashboard-show" id="user-dashboard-show">
+        <div class="user-dashboard-show-avatar"></div>
     </div>
     <div class="user-dashboard-property">
         <div class="user-dashboard-property-state">打脸中</div>

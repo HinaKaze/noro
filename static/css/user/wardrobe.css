@@ -1,7 +1,7 @@
 .user-wardrobe{
 	display: block;
 	width:5rem;
-	height: 9rem;
+	height: 6rem;
 	border: 0.02rem solid #333;
 }
 
@@ -9,6 +9,8 @@
 	width: 0.9rem;
 	height: 0.9rem;
 	border: 0.02rem solid #333;
+	background-color: #fff;
+	background-size: 100%;
 }
 
 /*left*/
@@ -44,8 +46,13 @@
 	height: 4rem;
 }
 
+.user-wardrobe-show{
+	width: 3rem;
+	height: 3rem;
+}
 
-.user-wardrobe-shoe{
+
+.user-wardrobe-shoes{
 	margin:0 auto;
 }
 
@@ -59,3 +66,33 @@
 .user-wardrobe-emotion{
 	margin-top: 1rem;
 }
+
+
+/*menu*/
+.user-wardrobe-menu{
+	/*margin-top: 1px;
+	margin-bottom: 1px;*/
+	width: 1rem;
+	height: 1rem;
+	background-size: 1rem 1rem;
+}
+
+.user-wardrobe-menu:hover{
+	background-color: #e6f2ff;
+}
+
+.user-wardrobe-menu-button{
+	border-radius: 0px;
+	width: 0.9rem;
+	height: 0.9rem;
+}
+
+.user-wardrobe-menu-button:hover{
+	cursor: pointer;
+}
+
+.dropdown-menu{
+	min-width: 1px;
+	z-index: 10;
+}
+

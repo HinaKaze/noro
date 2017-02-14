@@ -2,21 +2,87 @@
 $(document).ready(function() {
     $.get("/user/show", function(data, status) {
         $("#user-wardrobe-show").html(data);
+        //load all show
+        // $(".user-wardrobe-body").css("background-image",$(".user-show-body").css("background-image"))
+        $(".user-wardrobe-hair").css("background-image", $(".user-show-hair").css("background-image"))
+        $(".user-wardrobe-emotion").css("background-image", $(".user-show-emotion").css("background-image"))
+        $(".user-wardrobe-clothes").css("background-image", $(".user-show-clothes").css("background-image"))
+        $(".user-wardrobe-trousers").css("background-image", $(".user-show-trousers").css("background-image"))
+        $(".user-wardrobe-shoes").css("background-image", $(".user-show-shoes").css("background-image"))
+    });
+    $(".user-wardrobe-hair .user-wardrobe-menu").click(function() {
+        $(".user-show-hair").css("background-image", $(this).css("background-image"))
+        $(".user-wardrobe-hair").css("background-image", $(".user-show-hair").css("background-image"))
+    });
+    $(".user-wardrobe-emotion .user-wardrobe-menu").click(function() {
+        $(".user-show-emotion").css("background-image", $(this).css("background-image"))
+        $(".user-wardrobe-emotion").css("background-image", $(".user-show-emotion").css("background-image"))
+    });
+    $(".user-wardrobe-clothes .user-wardrobe-menu").click(function() {
+        $(".user-show-clothes").css("background-image", $(this).css("background-image"))
+        $(".user-wardrobe-clothes").css("background-image", $(".user-show-clothes").css("background-image"))
+    });
+    $(".user-wardrobe-trousers .user-wardrobe-menu").click(function() {
+        $(".user-show-trousers").css("background-image", $(this).css("background-image"))
+        $(".user-wardrobe-trousers").css("background-image", $(".user-show-trousers").css("background-image"))
+    });
+    $(".user-wardrobe-shoes .user-wardrobe-menu").click(function() {
+        $(".user-show-shoes").css("background-image", $(this).css("background-image"))
+        $(".user-wardrobe-shoes").css("background-image", $(".user-show-shoes").css("background-image"))
     });
 });
 </script>
 <div class="user-wardrobe">
     <div class="user-wardrobe-left">
-        <div class="user-wardrobe-box user-wardrobe-clothes"></div>
-        <div class="user-wardrobe-box user-wardrobe-trousers"></div>
+        <div class="user-wardrobe-box user-wardrobe-clothes">
+            <div class="dropdown">
+                <div class="user-wardrobe-menu-button" data-toggle="dropdown"></div>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/clothes/clothes1.png)"></li>
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/clothes/clothes2.png)"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="user-wardrobe-box user-wardrobe-trousers">
+            <div class="dropdown">
+                <div class="user-wardrobe-menu-button" data-toggle="dropdown"></div>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/trousers/trousers1.png)"></li>
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="user-wardrobe-center">
-        <div class="user-wardrobe-box user-wardrobe-hair"></div>
+        <div class="user-wardrobe-box user-wardrobe-hair">
+            <div class="dropdown">
+                <div class="user-wardrobe-menu-button" data-toggle="dropdown"></div>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/hair/hair1.png)"></li>
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/hair/hair2.png)"></li>
+                </ul>
+            </div>
+        </div>
         <div class="user-wardrobe-show" id="user-wardrobe-show"></div>
-        <div class="user-wardrobe-box user-wardrobe-shoe"></div>
+        <div class="user-wardrobe-box user-wardrobe-shoes">
+            <div class="dropdown">
+                <div class="user-wardrobe-menu-button" data-toggle="dropdown"></div>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/shoes/shoes1.png)"></li>
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/shoes/shoes2.png)"></li>
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="user-wardrobe-right">
-        <div class="user-wardrobe-box user-wardrobe-emotion"></div>
+        <div class="user-wardrobe-box user-wardrobe-emotion">
+            <div class="dropdown">
+                <div class="user-wardrobe-menu-button" data-toggle="dropdown"></div>
+                <ul class="dropdown-menu" role="menu">
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/emotion/emotion1.png)"></li>
+                    <li class="user-wardrobe-menu" style="background-image: url(/static/img/wardrobe/emotion/emotion2.png)"></li>
+                </ul>
+            </div>
+        </div>
     </div>
     <div>
         <button class="btn-warning btn">保存</button>

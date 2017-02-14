@@ -8,12 +8,13 @@
 </div>
 <script type="text/javascript">
 	var show = {{.Show}}
+	// var show = {"Id":1,"Body":1,"Hair":1,"Emotion":2,"Clothes":1,"Trousers":1,"Shoes":1}
 	$(document).ready(function(){
-		$(".user-show-body").css("background-image","/static/img/wardrobe/body/body"+show.Body+".png")
-		$(".user-show-hair").css("background-image","/static/img/wardrobe/hair/hair"+show.Hair+".png")
-		$(".user-show-emotion").css("background-image","/static/img/wardrobe/emotion/emotion"+show.Emotion+".png")
-		$(".user-show-clothes").css("background-image","/static/img/wardrobe/clothes/clothes"+show.Clothes+".png")
-		$(".user-show-trousers").css("background-image","/static/img/wardrobe/trousers/trousers"+show.Trousers+".png")
-		$(".user-show-shoes").css("background-image","/static/img/wardrobe/shoes/shoes"+show.Shoes+".png")
+		$(".user-show-body").css("background-image","url(/static/img/wardrobe/body/body"+show.Body+".png)")
+		$(".user-show-hair").css("background-image","url(/static/img/wardrobe/hair/hair"+show.Hair+".png)")
+		$(".user-show-emotion").css("background-image","url(/static/img/wardrobe/emotion/emotion"+show.Emotion+".png)")
+		$(".user-show-clothes").css("background-image","url(/static/img/wardrobe/clothes/clothes"+show.Clothes+".png)")
+		$(".user-show-trousers").css("background-image","url(/static/img/wardrobe/trousers/trousers"+show.Trousers+".png)")
+		$(".user-show-shoes").css("background-image","url(/static/img/wardrobe/shoes/shoes"+show.Shoes+".png)")
 	});
 </script>

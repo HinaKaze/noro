@@ -6,6 +6,7 @@ import (
 
 	"github.com/astaxie/beego/orm"
 	"github.com/hinakaze/iniparser"
+	"github.com/hinakaze/noro/models/user"
 	_ "github.com/lib/pq"
 )
 
@@ -53,6 +54,7 @@ func TestMain(m *testing.M) {
 	orm.Debug = true
 	orm.RegisterDataBase("default", driverName, dataSource)
 	orm.RegisterModel(new(TUser), new(TProfile), new(TPost), new(TTag))
+	orm.RegisterModel(new(user.Show), new(user.User), new(user.Friendship))
 	orm.RunSyncdb("default", false, true)
 	m.Run()
 }
@@ -72,16 +74,22 @@ func TestMain(m *testing.M) {
 //	o.Insert(&p2)
 //}
 
-func TestRead(t *testing.T) {
-	o := orm.NewOrm()
-	u := TUser{Id: 4}
-	o.Read(&u)
+//func TestRead(t *testing.T) {
+//	o := orm.NewOrm()
+//	u := TUser{Id: 4}
+//	o.Read(&u)
 
-	o.LoadRelated(&u, "Post")
-	o.Read(u.Profile)
-	t.Log(u)
-	t.Log(u.Post[0].Title)
-	t.Log(u.Profile)
+//	o.LoadRelated(&u, "Post")
+//	o.Read(u.Profile)
+//	t.Log(u)
+//	t.Log(u.Post[0].Title)
+//	t.Log(u.Profile)
+//}
+
+func TestInjectUserShow(t *testing.T) {
+	//	o := orm.NewOrm()
+	fakeShow := &user.Show{User: &user.User{Id: 3}, Body: 1, Hair: 1, Emotion: 1, Clothes: 1, Trousers: 1, Shoes: 1}
+	user.SaveShow(fakeShow)
 }
 
 //func TestRead2(t *testing.T) {

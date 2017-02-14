@@ -1,19 +1,20 @@
 /*user show*/
 .user-show{
 	position: relative;
-	width: 3rem;
-	height: 3rem;
+	width: 100%;
+	height: 100%;
 }
 
 .user-show-ele{
 	position: absolute;
-	background-size: 3rem;
-	width: 3rem;
-	height: 3rem;
+	background-size: 100%;
+	width: 100%;
+	height: 100%;
+	background-repeat: no-repeat;
 }
 
 .user-show-body{
-	/*background-image: url("/static/img/wardrobe/body/body1.png");*/
+	background-image: url("/static/img/wardrobe/body/body1.png");
 	z-index: 0;
 }
 

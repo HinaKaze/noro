@@ -3,6 +3,7 @@ package user
 import (
 	"crypto/md5"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/astaxie/beego/orm"
@@ -71,6 +72,8 @@ func (u *User) ToT(flag bool) (t TUser) {
 		for _, f := range u.Friends {
 			t.Friends = append(t.Friends, f.ToT())
 		}
+	}
+	if u.Show != nil {
 		t.Show = u.Show.ToT()
 	}
 	return
@@ -135,6 +138,7 @@ func GetUser(id int64) (user *User) {
 	if err != nil {
 		panic(err.Error())
 	}
+	log.Printf("Load user [%+v] show [%+v]", *user, *(user.Show))
 	return
 }
 

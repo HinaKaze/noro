@@ -13,22 +13,18 @@ $(document).ready(function() {
         update: update,
     });
     var assetePath = "static/img/game/";
+    var showPath = "static/img/wardrobe/";
     //var player;
     var cursors;
     var platfroms;
-    var stars;
-    var score = 0;
-    var scoreText;
     var players = {};
     var lastState = "stop";
 
     function preload() {
         game.load.image("sky", assetePath + "night-background.jpg");
         game.load.image("ground", assetePath + "platform.png");
-        game.load.image("star", assetePath + "star.png");
         game.load.image("imoto", assetePath + "imoto.png");
         game.load.image("ani", assetePath + "ani.png");
-        game.load.spritesheet("dude", assetePath + "dude.png", 32, 44);
     }
 
     function create() {
@@ -69,16 +65,6 @@ $(document).ready(function() {
             //players[myself.Id] = player
 
         cursors = game.input.keyboard.createCursorKeys();
-
-        stars = game.add.group();
-        stars.enableBody = true;
-        for (var i = 0; i < 12; i++) {
-            var star = stars.create(i * 70, 0, "star");
-            star.body.gravity.y = 6;
-            star.body.bounce.y = 0.7 + Math.random() * 0.2;
-        }
-
-
     }
 
     function update() {
@@ -106,7 +92,6 @@ $(document).ready(function() {
             }
             lastState = "up";
         } else {
-
             myselfPlayer.noro.state = "stop";
             if (lastState != "stop") {
                 sendWSData(7, "");
@@ -128,8 +113,6 @@ $(document).ready(function() {
                 }
                 game.physics.arcade.collide(pc, p);
             }
-            game.physics.arcade.collide(stars, platforms);
-            game.physics.arcade.overlap(p, stars, collectStar, null, this);
             p.body.velocity.x = 0;
 
             switch (p.noro.state) {
@@ -157,19 +140,27 @@ $(document).ready(function() {
     }
 
     function newPlayer(user) {
-        console.log(players.length);
-
-        var player
-        if (user.Gender == 0) {
-            player = game.add.sprite(20,100, "imoto");
-        } else if (user.Gender == 1) {
-            player = game.add.sprite(20, 100, "ani");
-        } else {
-            player = game.add.sprite(20, 100, "imoto");
-        }
+        console.log(user.Show)
+        game.load.image("player-body"+user.Id,showPath + "body/body"+user.Show.Body+".png")
+        game.load.image("player-hair"+user.Id,showPath + "hair/hair"+user.Show.Hair+".png");
+        game.load.image("player-emotion"+user.Id,showPath + "emotion/emotion"+user.Show.Emotion+".png");
+        game.load.image("player-clothes"+user.Id,showPath + "clothes/clothes"+user.Show.Clothes+".png");
+        game.load.image("player-trousers"+user.Id,showPath + "trousers/trousers"+user.Show.Trousers+".png");
+        game.load.image("player-shoes"+user.Id,showPath + "shoes/shoes"+user.Show.Shoes+".png");
+        game.load.start();
+        var player = game.add.sprite(20,100,"player-body"+user.Id)
+        player.width=150;
+        player.height=150;
+        // if (user.Gender == 0) {
+        //     player = game.add.sprite(20,100, "imoto");
+        // } else if (user.Gender == 1) {
+        //     player = game.add.sprite(20, 100, "ani");
+        // } else {
+        //     player = game.add.sprite(20, 100, "imoto");
+        // }
 
         game.physics.arcade.enable(player);
-        player.body.gravity.y = 300;
+        player.body.gravity.y = 500;
         player.body.bounce.y = 0.2;
         player.body.colliderWorldBounds = true;
 
@@ -197,6 +188,18 @@ $(document).ready(function() {
             fill: "#f00"
         });
         player.noro.msgChild = player.addChild(playerMsg);
+
+        //load show
+        var playerHair = game.make.image(0,0,"player-hair"+user.Id);
+        player.addChild(playerHair)
+        var playerEmotion = game.make.image(0,0,"player-emotion"+user.Id);
+        player.addChild(playerEmotion)
+        var playerClothes = game.make.image(0,0,"player-clothes"+user.Id);
+        player.addChild(playerClothes)
+        var playerTrousers = game.make.image(0,0,"player-trousers"+user.Id);
+        player.addChild(playerTrousers)
+        var playerShoes = game.make.image(0,0,"player-shoes"+user.Id);
+        player.addChild(playerShoes)
     }
 
     function removePlayer(user) {
@@ -281,12 +284,6 @@ $(document).ready(function() {
         }
     }
 
-
-    function collectStar(player, star) {
-        star.kill();
-        score += 10;
-        //scoreText.text = "Score:" + score;
-    }
     $("#input_send").click(function() {
         var message = $("#input_text").val()
         if (message == "") {
@@ -311,33 +308,33 @@ $(document).ready(function() {
     /*
     user-chat_room
     */
-    function showHistoryMsgs() {
-        for (hm of room.HistoryMsgs) {
-            addMessage(hm.User, hm.Text, hm.Time);
-        }
-    }
+    // function showHistoryMsgs() {
+    //     for (hm of room.HistoryMsgs) {
+    //         addMessage(hm.User, hm.Text, hm.Time);
+    //     }
+    // }
 
-    function addMessage(user, text, time) {
-        addText(user, text, time)
-    }
+    // function addMessage(user, text, time) {
+    //     addText(user, text, time)
+    // }
 
-    function addText(user, text, time) {
-        var http = '\
-        <div class="message">\
-            <div class="message-user">\
-                <img class="message-user-avatar" src="static/img/user/avatar' + user.Id + '.jpg"></img>\
-                <div class="message-user-name">' + user.Name + '</div>\
-            </div>\
-            <div class="message-content">\
-                <div class="message-content-text text">' + text + '</div>\
-                <div class="message-content-time">' + time + '</div>\
-            </div>\
-        </div>\
-        '
-        $("#messages").append(http)
-    }
+    // function addText(user, text, time) {
+    //     var http = '\
+    //     <div class="message">\
+    //         <div class="message-user">\
+    //             <img class="message-user-avatar" src="static/img/user/avatar' + user.Id + '.jpg"></img>\
+    //             <div class="message-user-name">' + user.Name + '</div>\
+    //         </div>\
+    //         <div class="message-content">\
+    //             <div class="message-content-text text">' + text + '</div>\
+    //             <div class="message-content-time">' + time + '</div>\
+    //         </div>\
+    //     </div>\
+    //     '
+    //     $("#messages").append(http)
+    // }
 
-    showHistoryMsgs();
+    // showHistoryMsgs();
     noro.showUserHome();
 
     //load wardrobe
