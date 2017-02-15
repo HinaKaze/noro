@@ -7,11 +7,12 @@ $(document).ready(function() {
     Virtual Room
 
     */
-    var game = new Phaser.Game(800, 400, Phaser.AUTO, "user-home-room", {
+    var game = new Phaser.Game(800,400, Phaser.AUTO, "user-home-room", {
         preload: preload,
         create: create,
         update: update,
     });
+
     var assetePath = "static/img/game/";
     var showPath = "static/img/wardrobe/";
     //var player;
@@ -28,6 +29,7 @@ $(document).ready(function() {
     }
 
     function create() {
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.physics.startSystem(Phaser.Physics.ARCADE);
 
         game.add.sprite(0, 0, "sky");
@@ -117,13 +119,16 @@ $(document).ready(function() {
 
             switch (p.noro.state) {
                 case "right":
-                    console.log(p.noro.state);
-                    p.body.velocity.x += 150;
-                    p.animations.play("right");
+                    if (p.x < 600){
+                        p.body.velocity.x += 150;
+                        p.animations.play("right");
+                    }
                     break;
                 case "left":
-                    p.body.velocity.x += -150;
-                    p.animations.play("left");
+                    if (p.x > 0){
+                        p.body.velocity.x += -150;
+                        p.animations.play("left");
+                    }
                     break;
                 case "up":
                     if (p.body.touching.down && hitPlateform) {
@@ -140,7 +145,6 @@ $(document).ready(function() {
     }
 
     function newPlayer(user) {
-        console.log(user.Show)
         game.load.image("player-body"+user.Id,showPath + "body/body"+user.Show.Body+".png")
         game.load.image("player-hair"+user.Id,showPath + "hair/hair"+user.Show.Hair+".png");
         game.load.image("player-emotion"+user.Id,showPath + "emotion/emotion"+user.Show.Emotion+".png");
@@ -149,8 +153,8 @@ $(document).ready(function() {
         game.load.image("player-shoes"+user.Id,showPath + "shoes/shoes"+user.Show.Shoes+".png");
         game.load.start();
         var player = game.add.sprite(20,100,"player-body"+user.Id)
-        player.width=150;
-        player.height=150;
+        player.width=200;
+        player.height=200;
         // if (user.Gender == 0) {
         //     player = game.add.sprite(20,100, "imoto");
         // } else if (user.Gender == 1) {
@@ -257,9 +261,7 @@ $(document).ready(function() {
                 case 7:
                     changePlayerState(data.User, "stop");
                     break;
-
             }
-
         };
     }
     noro.userRoomWS.onclose = function(event) {
@@ -284,62 +286,62 @@ $(document).ready(function() {
         }
     }
 
-    $("#input_send").click(function() {
-        var message = $("#input_text").val()
+    /*
+    user-chat-message
+    */
+    function showHistoryMsgs() {
+        console.log("show HistoryMsgs")
+        for (hm of room.HistoryMsgs) {
+            console.log("show msg ",hm)
+            addMessage(hm.User, hm.Text, hm.Time);
+        }
+    }
+
+    function addMessage(user, text, time) {
+        var http = '\
+        <div class="chat-room-message" id="chat-room-message">\
+            <div class="chat-room-message-user">\
+                <img class="chat-room-message-user-avatar" src="static/img/user/avatar' + user.Id + '.jpg"></img>\
+                <div class="chat-room-message-user-name">' + user.Name + '</div>\
+            </div>\
+            <div class="chat-room-message-content">\
+                <div class="chat-room-message-content-text text">' + text + '</div>\
+                <div class="chat-room-message-content-time">' + time + '</div>\
+            </div>\
+        </div>\
+        '
+        $("#user-home-messages").append(http)
+    }
+
+    noro.showUserHome();  
+    //load wardrobe
+    $.get("/user/wardrobe",function(data,status){
+        $("#main-content-left").append('<div class="user-home-wardrobe" id="user-home-wardrobe"></div>');
+        $("#main-content-right").append('<div class="user-home-messages" id="user-home-messages"></div>');
+        $("#user-home-wardrobe").html(data);
+        showHistoryMsgs();
+    });
+
+    $("#user-dashboard-function-input-send").click(function() {
+        var message = $("#user-dashboard-function-input-text").val()
         if (message == "") {
             return
         }
-        sendWSData(3, message)
-        showNewMsg(myself, message)
-        $("#input_text").val("")
+        sendWSData(3,message);
+        showNewMsg(myself, message,noro.getFormatTime(new Date()))
+        $("#user-dashboard-function-input-text").val("");
     });
-    $("#input_text").keydown(function(e) {
-        //enter trigger
+
+     $("#user-dashboard-function-input-text").keydown(function(e) {
         if (e.keyCode == 13) {
-            var message = $("#input_text").val()
+            var message = $("#user-dashboard-function-input-text").val()
             if (message == "") {
                 return
             }
             sendWSData(3, message)
-            showNewMsg(myself, message)
-            $("#input_text").val("")
+            showNewMsg(myself, message,noro.getFormatTime(new Date()))
+            $("#user-dashboard-function-input-text").val("");
         }
-    });
-    /*
-    user-chat_room
-    */
-    // function showHistoryMsgs() {
-    //     for (hm of room.HistoryMsgs) {
-    //         addMessage(hm.User, hm.Text, hm.Time);
-    //     }
-    // }
-
-    // function addMessage(user, text, time) {
-    //     addText(user, text, time)
-    // }
-
-    // function addText(user, text, time) {
-    //     var http = '\
-    //     <div class="message">\
-    //         <div class="message-user">\
-    //             <img class="message-user-avatar" src="static/img/user/avatar' + user.Id + '.jpg"></img>\
-    //             <div class="message-user-name">' + user.Name + '</div>\
-    //         </div>\
-    //         <div class="message-content">\
-    //             <div class="message-content-text text">' + text + '</div>\
-    //             <div class="message-content-time">' + time + '</div>\
-    //         </div>\
-    //     </div>\
-    //     '
-    //     $("#messages").append(http)
-    // }
-
-    // showHistoryMsgs();
-    noro.showUserHome();
-
-    //load wardrobe
-    $.get("/user/wardrobe",function(data,status){
-        $("#user-home-messages").html(data);
     });
 });
 </script>
@@ -351,7 +353,6 @@ $(document).ready(function() {
     </div>
     <div class="user-home-content">
         <div class="user-home-room" id="user-home-room"></div>
-        <div class="user-home-messages" id="user-home-messages"></div>
         <div class="user-home-profile">This is my profile</div>
     </div>
 </div>

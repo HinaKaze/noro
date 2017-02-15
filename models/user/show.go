@@ -49,7 +49,16 @@ func (this *Show) ChangeShoes(shoes int) {
 	this.Shoes = shoes
 }
 
+func (this *Show) Equal(newShow Show) bool {
+	if this.Body == newShow.Body && this.Hair == newShow.Hair && this.Emotion == newShow.Emotion && this.Clothes == newShow.Clothes && this.Trousers == newShow.Trousers && this.Shoes == newShow.Shoes {
+		return true
+	} else {
+		return false
+	}
+}
+
 func (this *Show) ToT() (t TShow) {
+	t.Id = this.Id
 	t.Body = this.Body
 	t.Hair = this.Hair
 	t.Emotion = this.Emotion
@@ -66,4 +75,11 @@ func SaveShow(show *Show) *Show {
 		panic(err.Error())
 	}
 	return show
+}
+
+func UpdateShow(show *Show) {
+	_, err := orm.NewOrm().Update(show)
+	if err != nil {
+		panic(err.Error())
+	}
 }

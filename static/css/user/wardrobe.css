@@ -1,8 +1,8 @@
 .user-wardrobe{
 	display: block;
-	width:5rem;
-	height: 6rem;
-	border: 0.02rem solid #333;
+	width:4.1rem;
+	height: 4rem;
+	border: 1px solid #333;
 }
 
 .user-wardrobe-box{
@@ -21,17 +21,17 @@
 }
 
 .user-wardrobe-clothes{
-	margin-top: 2rem;
+	margin-top: 1rem;
 }
 
 .user-wardrobe-trousers{
-	margin-top: 1rem;
+	margin-top: 0rem;
 }
 
 /*center*/
 .user-wardrobe-center{
 	float: left;
-	width: 2.9rem;
+	width: 2rem;
 	height: 8rem;
 }
 
@@ -39,16 +39,15 @@
 	margin: 0 auto;
 }
 
-.user-wardrobe-body{
-	/*background-image: url("/static/img/wardrobe/body/body.png");*/
-	/*background-size:2.9rem 4rem;*/
-	width: 2.9rem;
-	height: 4rem;
-}
+/*.user-wardrobe-body{
+	background-image: url("/static/img/wardrobe/body/body.png");
+	width: 2rem;
+	height: 2rem;
+}*/
 
 .user-wardrobe-show{
-	width: 3rem;
-	height: 3rem;
+	width: 2rem;
+	height: 2rem;
 }
 
 

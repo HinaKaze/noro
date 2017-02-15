@@ -18,7 +18,7 @@ class Noro {
             }
         });
     }
-    sweepChatLobby(){
+    sweepChatLobby() {
         $("#musubi-omamori").text("回首");
         $(window).unbind("scroll");
     }
@@ -34,11 +34,12 @@ class Noro {
         $("#main-content-left").html("");
         $("#main-header").css("display", "block");
     }
-    showUserHome(){
+    showUserHome() {
         $("#main-header").css("display", "none");
-        $("#main-content-left").css("display","none");
-        $("#main-content-right").css("display","none");
-        $("#main-content-center").removeClass("col-md-6");
+         $("#user-dashboard-function-input").fadeIn(500);
+        // $("#main-content-left").css("display", "none");
+        // $("#main-content-right").css("display", "none");
+        // $("#main-content-center").removeClass("col-md-6");
     }
     changeMainBackground(imgurl) {
         $("#main-content").css("background-image", 'url("' + imgurl + '")');
@@ -51,20 +52,49 @@ class Noro {
     scrollTop() {
         $("html,body").animate({ scrollTop: 0 }, 500);
     }
-    toggleBlur(element){
-        if (element.css("filter") == "none"){
-            element.css("filter","blur(4px)");
-            element.css("-moz-filter","blur(4px)");
-            element.css("-webkit-filter","blur(4px)");
-            element.css("-o-filter","blur(4px)");
-            element.css("-ms-filter","blur(4px)");
-        }else{
-            element.css("filter","none");
-            element.css("-moz-filter","none");
-            element.css("-webkit-filter","none");
-            element.css("-o-filter","none");
-            element.css("-ms-filter","none");
+    toggleBlur(element) {
+        if (element.css("filter") == "none") {
+            element.css("filter", "blur(4px)");
+            element.css("-moz-filter", "blur(4px)");
+            element.css("-webkit-filter", "blur(4px)");
+            element.css("-o-filter", "blur(4px)");
+            element.css("-ms-filter", "blur(4px)");
+        } else {
+            element.css("filter", "none");
+            element.css("-moz-filter", "none");
+            element.css("-webkit-filter", "none");
+            element.css("-o-filter", "none");
+            element.css("-ms-filter", "none");
         }
+    }
+    handleResult(result) {
+        if (result.Type == 1) {
+            console.log("Mission success")
+        } else if (result.Type == 0) {
+            console.log("Mission failed,", result.Info)
+        }
+    }
+    put(url, data) {
+        $.ajax({
+            url: url,
+            type: "PUT",
+            data: data,
+            dataType: "json",
+            success: function(result) {
+                noro.handleResult(result);
+            }
+        });
+    }
+    delete(url, data) {
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            data: data,
+            dataType: "json",
+            success: function(result) {
+                noro.handleResult(result);
+            }
+        });
     }
 }
 

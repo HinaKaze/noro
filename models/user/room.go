@@ -56,25 +56,25 @@ func GetRUserRoom(id int64) (room *RUserRoom, ok bool) {
 }
 
 type RUserRoom struct {
-	Id    int64
-	Owner *User
-	Mates []*RUser
-	//	HistoryMsgs []chat.ChatMessage
+	Id          int64
+	Owner       *User
+	Mates       []*RUser
+	HistoryMsgs []RoomMessage
 	sync.RWMutex
 }
 
 func (c *RUserRoom) Init() {
 	c.Mates = make([]*RUser, 0)
-	//	c.HistoryMsgs = make([]ChatMessage, 0)
+	c.HistoryMsgs = make([]RoomMessage, 0)
 }
 
-func (c *RUserRoom) AddMate(u User, ws *websocket.Conn) bool {
+func (c *RUserRoom) AddMate(u *User, ws *websocket.Conn) bool {
 	c.Lock()
 	defer c.Unlock()
 	//	if c.MaxMember <= uint16(len(c.Mates)) {
 	//		return false
 	//	}
-	newRUser := &RUser{User: u, WS: ws}
+	newRUser := &RUser{User: *u, WS: ws}
 	//	for _, ou := range c.Mates {
 	//		if ou.Id == u.Id {
 	//			ou = newUserDetail
@@ -97,36 +97,36 @@ func (c *RUserRoom) RemoveMate(uId int64) {
 	return
 }
 
-//func (c *RUserRoom) BroadcastMessage(m ChatMessage) {
-//	c.RLock()
-//	defer c.RUnlock()
-//	if m.Type == 3 {
-//		if len(c.HistoryMsgs) >= 15 {
-//			c.HistoryMsgs = append(c.HistoryMsgs[1:], m)
-//		} else {
-//			c.HistoryMsgs = append(c.HistoryMsgs, m)
-//		}
-//		index := 1
-//		for i := range c.HistoryMsgs {
-//			c.HistoryMsgs[i].Id = index
-//			index++
-//		}
-//	}
-//	tm := m.ToT()
-//	for _, mate := range c.Mates {
-//		if m.User.Id == mate.User.Id {
-//			continue
-//		}
-//		mate.ws.WriteJSON(tm)
-//	}
-//}
+func (c *RUserRoom) BroadcastMessage(m RoomMessage) {
+	c.RLock()
+	defer c.RUnlock()
+	if m.Type == MessageMsg {
+		if len(c.HistoryMsgs) >= 15 {
+			c.HistoryMsgs = append(c.HistoryMsgs[1:], m)
+		} else {
+			c.HistoryMsgs = append(c.HistoryMsgs, m)
+		}
+		index := 1
+		for i := range c.HistoryMsgs {
+			c.HistoryMsgs[i].Id = index
+			index++
+		}
+	}
+	tm := m.ToT()
+	for _, mate := range c.Mates {
+		if m.User.Id == mate.User.Id {
+			continue
+		}
+		mate.WS.WriteJSON(tm)
+	}
+}
 
 func (this *RUserRoom) ToT() (t TUserRoom) {
 	t.Owner = this.Owner.ToT(false)
-	//	t.HistoryMsgs = make([]TChatMessage, 0)
-	//	for _, msg := range this.HistoryMsgs {
-	//		t.HistoryMsgs = append(t.HistoryMsgs, msg.ToT())
-	//	}
+	t.HistoryMsgs = make([]TRoomMessage, 0)
+	for _, msg := range this.HistoryMsgs {
+		t.HistoryMsgs = append(t.HistoryMsgs, msg.ToT())
+	}
 	t.Mates = make([]TUser, 0)
 	for _, mate := range this.Mates {
 		t.Mates = append(t.Mates, mate.ToT(false))
@@ -135,7 +135,7 @@ func (this *RUserRoom) ToT() (t TUserRoom) {
 }
 
 type TUserRoom struct {
-	Owner TUser
-	//	HistoryMsgs []TChatMessage
-	Mates []TUser
+	Owner       TUser
+	HistoryMsgs []TRoomMessage
+	Mates       []TUser
 }
