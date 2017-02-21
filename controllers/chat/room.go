@@ -110,7 +110,7 @@ func (w *ChatRoomController) WS() {
 		}
 		roomDetail.BroadcastMessage(mchat.ChatMessage{Id: 1, Type: 2, User: userp, Text: string(bytes), Time: time.Now()})
 		//robot
-		if roomDetail.Id == 1 {
+		if roomDetail.Id == 9988 {
 			answer := GetRobotAnswer(string(bytes))
 			roomDetail.BroadcastMessage(mchat.ChatMessage{Id: 1, Type: 2, User: muser.UserRobot, Text: answer, Time: time.Now()})
 		}
